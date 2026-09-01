@@ -1,23 +1,23 @@
 export const profile = {
-  teacherName: "",
-  title: "나의 링크트리",
-  introTitle: "나의 링크트리",
-  introDescription: "",
-  catalogTitle: "게시판",
-  catalogDescription: "",
+  teacherName: "아이링쌤의 데이터실험실",
+  title: "아이링쌤의 데이터실험실",
+  introTitle: "아이링쌤의 데이터실험실",
+  introDescription: "디지털 AI로 영어를 실험하는 교사 아이링쌤",
+  catalogTitle: "미니홈피",
+  catalogDescription: "영어 · 데이터 · AI 수업 실험실",
   /* 왼쪽 프로필 사진입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
-  photo: { src: "", alt: "" },
+  photo: { src: "/assets/profile.png", alt: "아이링쌤 프로필" },
   /* 홈 탭 위쪽 미니룸 이미지입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
-  miniroom: { src: "", alt: "" },
+  miniroom: { src: "/assets/rooms2.png", alt: "아이링쌤의 데이터실험실 미니룸" },
   /* 아래는 탭 이름표입니다. 나만의 이름으로 바꿔도 되고, 안 바꾸면 기본값 그대로 나옵니다. */
   storyLabel: "연재물",
   boardLabel: "게시판",
-  boardSubtitle: "앱과 게시글",
+  boardSubtitle: "앱과 활동 기록",
   boardEmptyText: "아직 올린 글이 없습니다.",
   photoLabel: "사진첩",
   photoSubtitlePrefix: "사진",
   /* 오른쪽 위, 옛날 싸이월드 주소창을 흉내 낸 문구입니다. */
-  displayUrl: ""
+  displayUrl: "ilring.lab"
 };
 
 /* 프로필 탭에 들어가는 소개 글입니다. 문구만 바꿔서 쓰세요. */
@@ -34,7 +34,33 @@ export type ProfileSection = {
   blocks: ProfileBlock[];
 };
 
-export const profileSections: ProfileSection[] = [];
+export const profileSections: ProfileSection[] = [
+  {
+    id: "intro",
+    title: "소개",
+    blocks: [
+      { kind: "text", lines: ["영어교육 연구자, 데이터 실험랩 운영자, 작가 및 교사"] }
+    ]
+  },
+  {
+    id: "works",
+    title: "하고 있는 일들",
+    blocks: [
+      {
+        kind: "list",
+        heading: "연구 · 집필 · 개발",
+        items: [
+          "성적 분석 대시보드를 활용한 영어 수업·평가 혁신 사례 연구 (AI·디지털 수업평가 활용 지원단)",
+          "「생성형 AI 시대의 수행평가, 무엇을 어떻게 평가할 것인가」 원고 집필 (한국교총)",
+          "데이터로 본 지역 맞춤형 기초학력·사교육 대책 연구",
+          "「디지털 도구를 잘 쓰는 교사에서 학습을 설계하는 교사로」 교원 전문성·진로 개발 가이드 집필",
+          "방글라데시 교원초청 디지털 세계화 연수 교재 개발",
+          "교육 공공데이터 학술대회 논문 발표"
+        ]
+      }
+    ]
+  }
+];
 
 /* 미요툰 회차는 src/config/miyotoon.ts 에 있습니다. */
 export { episodes, type Episode } from "./miyotoon";
@@ -52,7 +78,40 @@ export type BoardPost = {
   preview?: { src: string; alt: string };
 };
 
-export const boardPosts: BoardPost[] = [];
+export const boardPosts: BoardPost[] = [
+  {
+    id: "ai-creative-mission",
+    category: "앱",
+    title: "AI Creative Mission — 방글라데시 교원 연수 웹앱",
+    summary: "캐릭터 시트 → 포스터 → 스토리보드 → 30초 영상까지 잇는 AI 창작 미션 플랫폼",
+    date: "2026.08",
+    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
+  },
+  {
+    id: "bd-2026-textbook",
+    category: "글",
+    title: "2026 방글라데시 교원초청 디지털 세계화 연수 교재",
+    summary: "ICT·생성형 AI 활용 수업을 위한 연수 교재 집필·개편",
+    date: "2026.07",
+    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
+  },
+  {
+    id: "ai-video-mission",
+    category: "앱",
+    title: "AI 영상 제작 미션 · Meta AI 6-클립 영상 키트",
+    summary: "5초 클립 6개를 이어 붙여 30초 영상을 완성하는 모바일 제작 워크플로",
+    date: "2026.07",
+    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
+  },
+  {
+    id: "bd-2023-2025",
+    category: "글",
+    title: "2023–2025 방글라데시 교원초청 정보화 연수",
+    summary: "3개년 정보화·디지털 세계화 연수 교재 개발 및 강의 참여",
+    date: "2025.07",
+    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
+  }
+];
 
 /* 사진첩 탭입니다. */
 export type PhotoItem = {
@@ -61,7 +120,9 @@ export type PhotoItem = {
   src: string;
 };
 
-export const photos: PhotoItem[] = [];
+export const photos: PhotoItem[] = [
+  { id: "photo-1", name: "아이링쌤의 데이터실험실", src: "/assets/photo.png" }
+];
 
 /* 왼쪽 아래 파도타기 목록입니다.
    고정 규칙: 첫 번째 항목은 반드시 "도름스 커뮤니티 나의 활동" 링크입니다. 지우지 마세요. */
@@ -72,7 +133,8 @@ export type WaveLink = {
 };
 
 export const waveLinks: WaveLink[] = [
-  { id: "dorms-activity", label: "도름스 커뮤니티 나의 활동", href: "" }
+  { id: "dorms-activity", label: "도름스 커뮤니티 나의 활동", href: "https://irenechey.vercel.app/" },
+  { id: "meyo-lab", label: "미요Lab 미니홈피", href: "https://pcallpang.github.io/meyo-lab/" }
 ];
 
 /* 미니홈피 BGM 입니다. 유튜브 영상을 음원으로 씁니다.
@@ -99,7 +161,9 @@ export function secondsAt(timestamp: string): number {
     .reduce((total, part) => total * 60 + part, 0);
 }
 
-export const bgmTracks: BgmTrack[] = [];
+export const bgmTracks: BgmTrack[] = [
+  { id: "pinball", title: "Pinball", artist: "리센느", videoId: "B8JJ8RNM-60" }
+];
 
 /* 홈 탭 아래쪽 한마디입니다. */
 export type GuestbookEntry = {
