@@ -149,10 +149,11 @@ export function EditBar() {
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const HEART_STYLES = ["bd", "bd2", "pop", "jelly", "brush", "cloud"] as const;
+  const HEART_STYLES = ["bd", "bd2", "bd3", "pop", "jelly", "brush", "cloud"] as const;
   const HEART_LABEL: Record<string, string> = {
     bd: "방글라데시",
     bd2: "방글라데시2",
+    bd3: "방글라데시3",
     pop: "러블리",
     jelly: "젤리",
     brush: "붓터치",

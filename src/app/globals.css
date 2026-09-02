@@ -179,7 +179,8 @@ body.lt-intro-open {
 }
 /* 방글라데시 일러스트 하트 */
 .cy-heart-bd,
-.cy-heart-bd2 {
+.cy-heart-bd2,
+.cy-heart-bd3 {
   filter: drop-shadow(0 14px 24px rgba(0, 70, 45, 0.35));
 }
 @media (max-width: 960px) {

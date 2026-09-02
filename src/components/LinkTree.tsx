@@ -237,7 +237,7 @@ function HeartPopSvg() {
   );
 }
 
-const HEART_STYLES = ["bd", "bd2", "pop", "jelly", "brush", "cloud"] as const;
+const HEART_STYLES = ["bd", "bd2", "bd3", "pop", "jelly", "brush", "cloud"] as const;
 type HeartStyle = (typeof HEART_STYLES)[number];
 
 function HeartDeco() {
@@ -256,6 +256,8 @@ function HeartDeco() {
         <img src={asset("/assets/heart-bd.png")} alt="" />
       ) : style === "bd2" ? (
         <img src={asset("/assets/heart-bd2.png")} alt="" />
+      ) : style === "bd3" ? (
+        <img src={asset("/assets/heart-bd3.png")} alt="" />
       ) : (
         <HeartPopSvg />
       )}
