@@ -5,15 +5,20 @@ import { Spiral, type SpiralProps } from "@paper-design/shaders-react";
 import { asset } from "@/lib/asset";
 import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
 import {
+  BANGLADESH_LIMITS,
   GUESTBOOK_LIMITS,
+  addBangladeshEntry,
   addGuestbookEntry,
   isCounterEnabled,
+  isFirebaseConfigured,
   isGuestbookEnabled,
   recordVisit,
+  subscribeBangladesh,
   subscribeGuestbook,
   type RemoteEntry,
   type VisitCounts
 } from "@/lib/firebase";
+import { translateMessage, type Translation } from "@/lib/translate";
 import {
   boardPosts,
   episodes,
@@ -26,7 +31,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "story", "board", "photo", "guestbook"] as const;
+const ALL_TABS = ["home", "profile", "story", "board", "photo", "guestbook", "bangladesh"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -39,7 +44,8 @@ const NAV_LABELS: Record<TabName, string> = {
   story: profile.storyLabel,
   board: profile.boardLabel,
   photo: profile.photoLabel,
-  guestbook: "방명록"
+  guestbook: "방명록",
+  bangladesh: "방글라"
 };
 
 /* 진입 화면 셰이더 배경 설정입니다. 색은 theme.ts 를 따릅니다. */
@@ -149,7 +155,8 @@ const TAB_TITLES: Record<TabName, string> = {
   story: profile.storyLabel,
   board: profile.boardLabel,
   photo: profile.photoLabel,
-  guestbook: "방명록"
+  guestbook: "방명록",
+  bangladesh: "방글라데시 코너"
 };
 
 function SectionTitle({ title, sub }: { title: string; sub?: string }) {
@@ -459,6 +466,137 @@ function GuestbookTab() {
   );
 }
 
+/* 방글라데시 코너: 영어·벵골어 메시지를 남기면 읽을 때 자동 번역합니다. */
+function TranslatedMessage({ text }: { text: string }) {
+  const [tr, setTr] = useState<Translation | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    setLoading(true);
+    translateMessage(text).then(result => {
+      if (!alive) return;
+      setTr(result);
+      setLoading(false);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [text]);
+
+  return (
+    <>
+      <div className="cy-bd-original">{text}</div>
+      {loading ? (
+        <div className="cy-bd-trans is-loading">번역 중… · translating…</div>
+      ) : tr ? (
+        <div className="cy-bd-trans">
+          <span className="cy-bd-trans-tag">{tr.target === "ko" ? "🌐 번역" : "🌐 EN"}</span> {tr.text}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function BangladeshForm() {
+  const [author, setAuthor] = useState("");
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (sending) return;
+    setSending(true);
+    setMessage(null);
+    try {
+      await addBangladeshEntry(author, text);
+      setAuthor("");
+      setText("");
+      setMessage({ kind: "ok", text: "메시지를 남겼어요! · Thank you!" });
+    } catch (error) {
+      setMessage({
+        kind: "error",
+        text: error instanceof Error ? error.message : "남기지 못했어요 · Could not send."
+      });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <form className="cy-bd-form" onSubmit={submit}>
+      <input
+        className="cy-gb-author"
+        value={author}
+        onChange={e => setAuthor(e.target.value)}
+        placeholder="Name · 이름"
+        maxLength={BANGLADESH_LIMITS.author}
+        aria-label="Name"
+      />
+      <textarea
+        className="cy-bd-textarea"
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="Write in English or Bengali… · 영어나 벵골어로 남겨 주세요…"
+        maxLength={BANGLADESH_LIMITS.text}
+        rows={3}
+        aria-label="Message"
+      />
+      <button className="cy-gb-submit" type="submit" disabled={sending}>
+        {sending ? "…" : "Send · 남기기"}
+      </button>
+      {message ? (
+        <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
+      ) : null}
+    </form>
+  );
+}
+
+function BangladeshTab() {
+  const [remote, setRemote] = useState<RemoteEntry[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!isFirebaseConfigured) return;
+    return subscribeBangladesh(30, setRemote, () => setFailed(true));
+  }, []);
+
+  const live = isFirebaseConfigured && !failed;
+
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title="방글라데시 코너" sub="Bangladesh Corner · বাংলাদেশ কর্নার" />
+      <div className="cy-bd-intro">
+        <p>🇰🇷 방글라데시 선생님들과 인사를 나누는 임시 코너입니다. 영어나 벵골어로 남겨 주세요 — 자동으로 번역됩니다.</p>
+        <p>🇬🇧 A temporary corner to greet teachers from Bangladesh. Write in English or Bengali — messages are auto-translated.</p>
+        <p>🇧🇩 বাংলাদেশের শিক্ষকদের সঙ্গে শুভেচ্ছা বিনিময়ের অস্থায়ী কর্নার। ইংরেজি বা বাংলায় লিখুন — বার্তা স্বয়ংক্রিয়ভাবে অনূদিত হবে।</p>
+      </div>
+
+      {!live ? (
+        <div className="cy-empty-box">방글라데시 코너는 준비 중입니다. · Coming soon.</div>
+      ) : remote === null ? (
+        <div className="cy-gb-loading">불러오는 중… · loading…</div>
+      ) : remote.length === 0 ? (
+        <div className="cy-gb-loading">첫 메시지를 남겨 주세요! · Be the first to write!</div>
+      ) : (
+        <div className="cy-bd-list">
+          {remote.map(entry => (
+            <div key={entry.id} className="cy-bd-item">
+              <div className="cy-bd-head">
+                <b>{entry.author}</b> <span className="cg-date">({entry.date})</span>
+              </div>
+              <TranslatedMessage text={entry.text} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {live ? <BangladeshForm /> : null}
+    </div>
+  );
+}
+
 /* 미니홈피 왼쪽 위 방문 수입니다. 들어올 때마다 한 번 기록하고 그 결과를 보여 줍니다.
    Firestore 가 설정되지 않았거나 아직 못 받았으면 숫자 자리를 - 로 둡니다. */
 function VisitCounter() {
@@ -615,6 +753,7 @@ function LinkTreeInner() {
                 {activeTab === "board" && <BoardTab />}
                 {activeTab === "photo" && <PhotoTab />}
                 {activeTab === "guestbook" && <GuestbookTab />}
+                {activeTab === "bangladesh" && <BangladeshTab />}
               </div>
             </div>
 

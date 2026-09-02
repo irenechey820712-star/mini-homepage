@@ -1214,6 +1214,96 @@ body.lt-intro-open {
 }
 
 /* ------------------------------------- */
+/* 방글라데시 코너                          */
+/* ------------------------------------- */
+.cy-bd-intro {
+  font-size: 0.74rem;
+  line-height: 1.55;
+  color: #6a5f86;
+  background: #f5f1fb;
+  border: 1px solid #e3d4f7;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.cy-bd-intro p {
+  margin: 0 0 5px;
+}
+.cy-bd-intro p:last-child {
+  margin-bottom: 0;
+}
+.cy-bd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.cy-bd-item {
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 9px 11px;
+}
+.cy-bd-head {
+  font-size: 0.72rem;
+  color: #403366;
+  margin-bottom: 4px;
+}
+.cy-bd-head .cg-date {
+  color: #999;
+  font-weight: normal;
+}
+.cy-bd-original {
+  font-size: 0.82rem;
+  color: #333;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.cy-bd-trans {
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #e6e6e6;
+  font-size: 0.8rem;
+  color: #6A55A8;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.cy-bd-trans.is-loading {
+  color: #aaa;
+  font-style: italic;
+}
+.cy-bd-trans-tag {
+  font-size: 0.66rem;
+  font-weight: 700;
+  background: #ede1fa;
+  color: #7E5FC0;
+  padding: 1px 5px;
+  border-radius: 4px;
+  margin-right: 3px;
+}
+.cy-bd-form {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cy-bd-textarea {
+  width: 100%;
+  font: inherit;
+  font-size: 0.8rem;
+  padding: 7px 9px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  resize: vertical;
+  line-height: 1.5;
+}
+.cy-bd-form .cy-gb-submit {
+  align-self: flex-end;
+  width: auto;
+  padding: 6px 16px;
+}
+
+/* ------------------------------------- */
 /* 소유자 편집 UI                          */
 /* ------------------------------------- */
 .cy-editbar {

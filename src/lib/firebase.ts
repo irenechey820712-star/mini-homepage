@@ -221,3 +221,54 @@ export async function addGuestbookEntry(author: string, text: string) {
     createdAt: serverTimestamp()
   });
 }
+
+/* ---------------------------------------------------------------
+   방글라데시 코너 (영어·벵골어 메시지, 읽을 때 자동 번역)
+   --------------------------------------------------------------- */
+export const BANGLADESH_LIMITS = { author: 40, text: 500 } as const;
+
+export function subscribeBangladesh(
+  count: number,
+  onData: (entries: RemoteEntry[]) => void,
+  onError: (error: Error) => void
+) {
+  const store = getDb();
+  if (!store) return () => {};
+
+  const q = query(collection(store, "bangladesh"), orderBy("createdAt", "desc"), fsLimit(count));
+  return onSnapshot(
+    q,
+    snapshot => {
+      onData(
+        snapshot.docs.map(entry => {
+          const data = entry.data();
+          return {
+            id: entry.id,
+            author: String(data.author ?? ""),
+            text: String(data.text ?? ""),
+            date: formatDate(data.createdAt)
+          };
+        })
+      );
+    },
+    error => onError(error as Error)
+  );
+}
+
+export async function addBangladeshEntry(author: string, text: string) {
+  const store = getDb();
+  if (!store) throw new Error("방글라데시 코너가 설정되지 않았습니다.");
+
+  const trimmedAuthor = author.trim();
+  const trimmedText = text.trim();
+
+  if (!trimmedAuthor || !trimmedText) throw new Error("Please fill in both name and message. / 이름과 메시지를 모두 적어 주세요.");
+  if (trimmedAuthor.length > BANGLADESH_LIMITS.author) throw new Error(`Name: up to ${BANGLADESH_LIMITS.author} characters.`);
+  if (trimmedText.length > BANGLADESH_LIMITS.text) throw new Error(`Message: up to ${BANGLADESH_LIMITS.text} characters.`);
+
+  await addDoc(collection(store, "bangladesh"), {
+    author: trimmedAuthor,
+    text: trimmedText,
+    createdAt: serverTimestamp()
+  });
+}

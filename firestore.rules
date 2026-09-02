@@ -47,6 +47,24 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    /* 방글라데시 코너입니다. 영어·벵골어 메시지를 누구나 남길 수 있습니다.
+       - 필드는 author, text, createdAt 세 개만 허용 (이름 40자, 본문 500자)
+       - createdAt 은 서버 시간만 허용, 수정·삭제는 콘솔에서만 */
+    match /bangladesh/{entryId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['author', 'text', 'createdAt'])
+        && request.resource.data.author is string
+        && request.resource.data.author.size() >= 1
+        && request.resource.data.author.size() <= 40
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 1
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.createdAt == request.time;
+
+      allow update, delete: if false;
+    }
+
     /* 미니홈피 왼쪽 위 TODAY / TOTAL 방문 수입니다. 문서 하나만 씁니다.
 
        - 한 번에 total 을 1씩만 올릴 수 있습니다
