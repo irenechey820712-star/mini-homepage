@@ -208,6 +208,21 @@ function ProfileTab() {
                 </div>
               );
             }
+            if (block.kind === "image") {
+              const img = <img src={asset(block.src)} alt={block.alt} loading="lazy" />;
+              return (
+                <figure key={bi} className="cy-profile-image">
+                  {block.href ? (
+                    <a href={block.href} target="_blank" rel="noopener noreferrer">
+                      {img}
+                    </a>
+                  ) : (
+                    img
+                  )}
+                  {block.caption ? <figcaption>{block.caption}</figcaption> : null}
+                </figure>
+              );
+            }
             return (
               <ul key={bi} className="cy-contact-list">
                 {block.items.map(item => (

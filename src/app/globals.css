@@ -1281,6 +1281,23 @@ body.lt-intro-open {
 .cy-editbar-status.is-ok { color: #4CA771; }
 .cy-editbar-status.is-err { color: #c0392b; }
 
+.cy-profile-image {
+  margin: 0 0 12px;
+}
+.cy-profile-image img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  border: 1px solid #e0d3f4;
+}
+.cy-profile-image figcaption {
+  margin-top: 6px;
+  font-size: 0.72rem;
+  color: #8b7ab0;
+  text-align: center;
+}
+
 .cy-edit-field {
   width: 100%;
   max-width: 100%;

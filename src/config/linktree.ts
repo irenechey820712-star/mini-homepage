@@ -24,7 +24,9 @@ export const profile = {
 export type ProfileBlock =
   | { kind: "text"; lines: string[] }
   | { kind: "list"; heading: string; items: string[] }
-  | { kind: "contact"; items: { label: string; value: string; href: string }[] };
+  | { kind: "contact"; items: { label: string; value: string; href: string }[] }
+  /* 이미지 한 장입니다. src 는 public/assets/ 기준 경로, href 를 주면 이미지를 링크로 감쌉니다. */
+  | { kind: "image"; src: string; alt: string; href?: string; caption?: string };
 
 export type ProfileSection = {
   id: string;
@@ -35,6 +37,19 @@ export type ProfileSection = {
 };
 
 export const profileSections: ProfileSection[] = [
+  {
+    id: "aiedap-card",
+    title: "AIEDAP 마스터교원 카드",
+    blocks: [
+      {
+        kind: "image",
+        src: "/assets/aiedap-card.png",
+        alt: "AIEDAP 마스터교원 프로필 카드",
+        href: "https://www.aiedap.or.kr/portfolios/7617",
+        caption: "AIEDAP(AI 교육 융합 지원 플랫폼) 포트폴리오 · 눌러서 자세히 보기"
+      }
+    ]
+  },
   {
     id: "intro",
     title: "소개",
@@ -56,23 +71,6 @@ export const profileSections: ProfileSection[] = [
           "「디지털 도구를 잘 쓰는 교사에서 학습을 설계하는 교사로」 교원 전문성·진로 개발 가이드 집필",
           "방글라데시 교원초청 디지털 세계화 연수 교재 개발",
           "교육 공공데이터 학술대회 논문 발표"
-        ]
-      }
-    ]
-  },
-  {
-    id: "portfolio",
-    title: "포트폴리오",
-    blocks: [
-      { kind: "text", lines: ["AIEDAP(AI 교육 융합 지원 플랫폼) 포트폴리오에 등재된 수업 사례입니다."] },
-      {
-        kind: "contact",
-        items: [
-          {
-            label: "AIEDAP",
-            value: "포트폴리오 보기 · aiedap.or.kr/portfolios/7617",
-            href: "https://www.aiedap.or.kr/portfolios/7617"
-          }
         ]
       }
     ]
