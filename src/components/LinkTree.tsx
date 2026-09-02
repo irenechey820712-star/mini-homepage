@@ -74,6 +74,48 @@ const introStyle = {
   "--body": "'Pretendard', 'Noto Sans KR', system-ui, sans-serif"
 } as React.CSSProperties;
 
+/* 메인 화면 프레임 모서리에 걸쳐지는 붓터치 느낌의 연보라 하트 장식입니다. */
+function HeartBrush() {
+  const d =
+    "M100 164C60 138 33 113 27 83C21 53 42 31 66 34C85 36 96 49 100 61C104 49 115 36 134 34C158 31 179 53 173 83C167 113 140 138 100 164Z";
+  return (
+    <span className="cy-heart-brush" aria-hidden="true">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <filter id="heartBrushA" x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.017 0.024" numOctaves="3" seed="11" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <filter id="heartBrushB" x="-30%" y="-30%" width="160%" height="160%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.03 0.02" numOctaves="2" seed="29" result="n" />
+            <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
+          </filter>
+          <linearGradient id="heartFill" x1="0" y1="0" x2="0.2" y2="1">
+            <stop offset="0" stopColor="#DED0F6" />
+            <stop offset="0.55" stopColor="#C3A6EC" />
+            <stop offset="1" stopColor="#AE8AE1" />
+          </linearGradient>
+        </defs>
+        <path
+          d={d}
+          filter="url(#heartBrushA)"
+          transform="translate(100 100) scale(1.06) rotate(-7) translate(-100 -100)"
+          fill="#E7DCF8"
+          opacity="0.5"
+        />
+        <path d={d} filter="url(#heartBrushA)" fill="url(#heartFill)" opacity="0.92" />
+        <path d={d} filter="url(#heartBrushB)" fill="none" stroke="#9E7BD6" strokeWidth="3.5" opacity="0.55" />
+        <path
+          d="M64 46C52 55 47 69 49 82C58 62 71 52 86 51C80 46 72 43 64 46Z"
+          filter="url(#heartBrushB)"
+          fill="#F3ECFB"
+          opacity="0.55"
+        />
+      </svg>
+    </span>
+  );
+}
+
 function ChevronDown({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -539,6 +581,7 @@ export default function LinkTree() {
 
           </div>
         </div>
+        <HeartBrush />
       </div>
 
       {!introSkipped ? (

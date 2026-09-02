@@ -7,6 +7,7 @@ html, body {
   min-height: 100%;
   font-family: "Pretendard", "Dotum", "Gulim", sans-serif;
   color: #333;
+  overflow-x: hidden; /* 프레임에 걸친 하트 장식이 가로 스크롤을 만들지 않게 합니다 */
 }
 
 /* 진입 화면이 떠 있는 동안에는 뒤에 깔린 미니홈피가 스크롤되지 않게 막습니다. */
@@ -141,6 +142,27 @@ body.lt-intro-open {
   width: 1040px; /* 전체 가로 사이즈 고정 */
   height: 640px; /* 세로 고정 */
   z-index: 10;
+}
+
+/* 메인 화면 프레임 오른쪽 아래 모서리에 걸치는 붓터치 하트 */
+.cy-heart-brush {
+  position: absolute;
+  right: -74px;
+  bottom: -86px;
+  width: 340px;
+  height: 340px;
+  transform: rotate(13deg);
+  z-index: 15;
+  pointer-events: none;
+  filter: drop-shadow(0 12px 22px rgba(123, 95, 190, 0.3));
+}
+.cy-heart-brush svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+@media (max-width: 960px) {
+  .cy-heart-brush { display: none; }
 }
 
 .cy-book-outer {
