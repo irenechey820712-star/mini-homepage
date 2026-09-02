@@ -234,7 +234,8 @@ export function secondsAt(timestamp: string): number {
 export const bgmTracks: BgmTrack[] = [
   { id: "pinball", title: "Pinball", artist: "리센느", videoId: "B8JJ8RNM-60" },
   { id: "newjeans-playlist", title: "뉴진스 플레이리스트", artist: "NewJeans", videoId: "f1WuPpDA5fo" },
-  { id: "tuide-playlist", title: "튜이드 노래모음 (신곡 포함)", artist: "TUIDE", videoId: "krcxcaucdaY" }
+  { id: "tuide-playlist", title: "튜이드 노래모음 (신곡 포함)", artist: "TUIDE", videoId: "krcxcaucdaY" },
+  { id: "rescene-playlist", title: "리센느 노래모음 (신곡 포함)", artist: "RESCENE", videoId: "GkI610V-7mo" }
 ];
 
 /* 홈 탭 아래쪽 한마디입니다. */
