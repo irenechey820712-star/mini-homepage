@@ -149,16 +149,16 @@ export function EditBar() {
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const HEART_STYLES = ["pop", "bd", "jelly", "brush", "cloud"] as const;
+  const HEART_STYLES = ["bd", "pop", "jelly", "brush", "cloud"] as const;
   const HEART_LABEL: Record<string, string> = {
-    pop: "러블리",
     bd: "방글라데시",
+    pop: "러블리",
     jelly: "젤리",
     brush: "붓터치",
     cloud: "구름"
   };
-  const rawHeart = text("heartStyle", "pop");
-  const heartStyle = (HEART_STYLES as readonly string[]).includes(rawHeart) ? rawHeart : "pop";
+  const rawHeart = text("heartStyle", "bd");
+  const heartStyle = (HEART_STYLES as readonly string[]).includes(rawHeart) ? rawHeart : "bd";
   const toggleHeart = () => {
     const i = HEART_STYLES.indexOf(heartStyle as (typeof HEART_STYLES)[number]);
     save("heartStyle", HEART_STYLES[(i + 1) % HEART_STYLES.length]);
