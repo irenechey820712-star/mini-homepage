@@ -165,12 +165,57 @@ function HeartJellySvg() {
   );
 }
 
+function HeartCloudSvg() {
+  const puffs: [number, number, number][] = [
+    [66, 60, 30], [52, 74, 23], [82, 52, 26],
+    [134, 60, 30], [148, 74, 23], [118, 52, 26],
+    [100, 74, 33], [100, 102, 30],
+    [80, 112, 24], [120, 112, 24],
+    [100, 130, 22], [100, 151, 13]
+  ];
+  return (
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="cloudFill" cx="45%" cy="36%" r="78%">
+          <stop offset="0" stopColor="#FCF9FF" />
+          <stop offset="55%" stopColor="#EEE4FA" />
+          <stop offset="100%" stopColor="#D6C4F0" />
+        </radialGradient>
+        <filter id="cloudGoo" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="7" result="blur" />
+          <feColorMatrix
+            in="blur"
+            type="matrix"
+            values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10"
+            result="goo"
+          />
+          <feGaussianBlur in="goo" stdDeviation="1.6" />
+        </filter>
+        <filter id="cloudSoft" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="5" />
+        </filter>
+      </defs>
+      <g filter="url(#cloudGoo)" fill="url(#cloudFill)">
+        {puffs.map(([cx, cy, r], i) => (
+          <circle key={i} cx={cx} cy={cy} r={r} />
+        ))}
+      </g>
+      <ellipse cx="76" cy="60" rx="20" ry="14" fill="#ffffff" opacity="0.6" filter="url(#cloudSoft)" />
+      <ellipse cx="122" cy="66" rx="13" ry="9" fill="#ffffff" opacity="0.42" filter="url(#cloudSoft)" />
+    </svg>
+  );
+}
+
+const HEART_STYLES = ["cloud", "jelly", "brush"] as const;
+type HeartStyle = (typeof HEART_STYLES)[number];
+
 function HeartDeco() {
   const { text } = useSiteEditor();
-  const style = text("heartStyle", "jelly") === "brush" ? "brush" : "jelly";
+  const raw = text("heartStyle", "cloud");
+  const style: HeartStyle = (HEART_STYLES as readonly string[]).includes(raw) ? (raw as HeartStyle) : "cloud";
   return (
     <span className={`cy-heart-brush cy-heart-${style}`} aria-hidden="true">
-      {style === "brush" ? <HeartBrushSvg /> : <HeartJellySvg />}
+      {style === "brush" ? <HeartBrushSvg /> : style === "jelly" ? <HeartJellySvg /> : <HeartCloudSvg />}
     </span>
   );
 }

@@ -149,8 +149,14 @@ export function EditBar() {
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  const heartStyle = text("heartStyle", "jelly") === "brush" ? "brush" : "jelly";
-  const toggleHeart = () => save("heartStyle", heartStyle === "jelly" ? "brush" : "jelly");
+  const HEART_STYLES = ["cloud", "jelly", "brush"] as const;
+  const HEART_LABEL: Record<string, string> = { cloud: "구름", jelly: "젤리", brush: "붓터치" };
+  const rawHeart = text("heartStyle", "cloud");
+  const heartStyle = (HEART_STYLES as readonly string[]).includes(rawHeart) ? rawHeart : "cloud";
+  const toggleHeart = () => {
+    const i = HEART_STYLES.indexOf(heartStyle as (typeof HEART_STYLES)[number]);
+    save("heartStyle", HEART_STYLES[(i + 1) % HEART_STYLES.length]);
+  };
 
   if (!ready) return null;
 
@@ -212,7 +218,7 @@ export function EditBar() {
           </button>
           {editing && (
             <button type="button" className="cy-editbar-mini" onClick={toggleHeart}>
-              하트: {heartStyle === "jelly" ? "젤리" : "붓터치"} ⇄
+              하트: {HEART_LABEL[heartStyle]} ⇄
             </button>
           )}
           <button type="button" className="cy-editbar-mini" onClick={() => signOutOwner()}>
