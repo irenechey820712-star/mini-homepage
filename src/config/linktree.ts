@@ -187,7 +187,8 @@ export type PhotoItem = {
 };
 
 export const photos: PhotoItem[] = [
-  { id: "photo-1", name: "아이링쌤의 데이터실험실", src: "/assets/photo.png" }
+  { id: "photo-1", name: "아이링쌤의 데이터실험실", src: "/assets/photo.png" },
+  { id: "photo-2", name: "아이링쌤의 데이터실험실 2", src: "/assets/photo2.png" }
 ];
 
 /* 왼쪽 아래 파도타기 목록입니다.

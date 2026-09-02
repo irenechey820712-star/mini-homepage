@@ -1010,18 +1010,45 @@ function VisitCounter() {
 }
 
 function PhotoTab() {
+  const [index, setIndex] = useState(0);
+  const total = photos.length;
+  const current = photos[index];
+
+  /* 사진을 클릭하면 이전 사진으로 넘어갑니다. (뒤로 넘기기) */
+  const goPrev = () => setIndex(i => (i - 1 + total) % total);
+
   return (
     <div className="cy-content-box">
-      <SectionTitle title={profile.photoLabel} sub={`${profile.photoSubtitlePrefix} ${photos.length}컷`} />
-      <ul className="cy-photo-grid">
-        {photos.map(photo => (
-          <li key={photo.id} className="cy-photo-item">
-            <div className="cy-photo-frame">
-              <img src={asset(photo.src)} alt={photo.name} loading="lazy" />
+      <SectionTitle title={profile.photoLabel} sub={`${profile.photoSubtitlePrefix} ${total}컷`} />
+      {current && (
+        <div className="cy-photo-carousel">
+          <button
+            type="button"
+            className="cy-photo-frame cy-photo-frame-button"
+            onClick={goPrev}
+            aria-label="이전 사진 보기"
+          >
+            <img src={asset(current.src)} alt={current.name} loading="lazy" />
+          </button>
+          <div className="cy-photo-caption">
+            <span className="cy-photo-name">{current.name}</span>
+            <span className="cy-photo-count">{index + 1} / {total}</span>
+          </div>
+          {total > 1 && (
+            <div className="cy-photo-dots">
+              {photos.map((photo, i) => (
+                <button
+                  key={photo.id}
+                  type="button"
+                  className={`cy-photo-dot${i === index ? " is-active" : ""}`}
+                  onClick={() => setIndex(i)}
+                  aria-label={`${i + 1}번째 사진 보기`}
+                />
+              ))}
             </div>
-          </li>
-        ))}
-      </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

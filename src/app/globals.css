@@ -945,6 +945,55 @@ body.lt-intro-open {
   object-fit: contain;
 }
 
+/* 사진첩 캐러셀 */
+.cy-photo-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.cy-photo-frame-button {
+  width: 100%;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 0.15s ease;
+}
+.cy-photo-frame-button:hover {
+  border-color: #ff8fab;
+}
+.cy-photo-caption {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  color: #666;
+}
+.cy-photo-name {
+  font-weight: 600;
+  color: #444;
+}
+.cy-photo-count {
+  color: #999;
+}
+.cy-photo-dots {
+  display: flex;
+  gap: 6px;
+}
+.cy-photo-dot {
+  width: 8px;
+  height: 8px;
+  padding: 0;
+  border: 1px solid #d0a0b0;
+  border-radius: 50%;
+  background: #fff;
+  cursor: pointer;
+}
+.cy-photo-dot.is-active {
+  background: #ff8fab;
+  border-color: #ff8fab;
+}
+
 .cy-empty-box {
   font-size: 0.78rem;
   line-height: 1.6;
