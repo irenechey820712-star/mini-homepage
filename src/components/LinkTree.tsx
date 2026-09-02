@@ -26,7 +26,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "story", "board", "photo"] as const;
+const ALL_TABS = ["home", "profile", "story", "board", "photo", "guestbook"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -38,7 +38,8 @@ const NAV_LABELS: Record<TabName, string> = {
   profile: "프로필",
   story: profile.storyLabel,
   board: profile.boardLabel,
-  photo: profile.photoLabel
+  photo: profile.photoLabel,
+  guestbook: "방명록"
 };
 
 /* 진입 화면 셰이더 배경 설정입니다. 색은 theme.ts 를 따릅니다. */
@@ -147,7 +148,8 @@ const TAB_TITLES: Record<TabName, string> = {
   profile: "프로필",
   story: profile.storyLabel,
   board: profile.boardLabel,
-  photo: profile.photoLabel
+  photo: profile.photoLabel,
+  guestbook: "방명록"
 };
 
 function SectionTitle({ title, sub }: { title: string; sub?: string }) {
@@ -444,6 +446,19 @@ function GuestbookList() {
   );
 }
 
+function GuestbookTab() {
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title="방명록" sub="한마디 남기고 가기" />
+      {!isGuestbookEnabled ? (
+        <div className="cy-empty-box">방명록은 준비 중입니다.</div>
+      ) : (
+        <GuestbookList />
+      )}
+    </div>
+  );
+}
+
 /* 미니홈피 왼쪽 위 방문 수입니다. 들어올 때마다 한 번 기록하고 그 결과를 보여 줍니다.
    Firestore 가 설정되지 않았거나 아직 못 받았으면 숫자 자리를 - 로 둡니다. */
 function VisitCounter() {
@@ -596,6 +611,7 @@ function LinkTreeInner() {
                 {activeTab === "story" && <StoryTab />}
                 {activeTab === "board" && <BoardTab />}
                 {activeTab === "photo" && <PhotoTab />}
+                {activeTab === "guestbook" && <GuestbookTab />}
               </div>
             </div>
 
