@@ -19,7 +19,7 @@ service cloud.firestore {
        그 값으로 아래 문자열을 바꾸고, src/config/site.ts 의 OWNER_UID 도 같게 맞춘 뒤
        이 규칙을 다시 게시(Publish)하세요. */
     function ownerUid() {
-      return "REPLACE_WITH_OWNER_UID";
+      return "J9MEA0BeTfZ1ET0TPDazz9Bzq112";
     }
     function isOwner() {
       return request.auth != null && request.auth.uid == ownerUid();

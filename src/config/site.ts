@@ -18,4 +18,4 @@ export const firebaseConfig = {
    처음엔 비워 두고, 배포된 사이트에서 Google 로그인을 한 번 하면
    편집바에 내 UID 가 표시됩니다. 그 값을 여기에 붙여넣고 다시 배포하세요.
    (firestore.rules 의 ownerUid 도 같은 값으로 맞춰야 합니다.) */
-export const OWNER_UID = process.env.NEXT_PUBLIC_OWNER_UID || "";
+export const OWNER_UID = process.env.NEXT_PUBLIC_OWNER_UID || "J9MEA0BeTfZ1ET0TPDazz9Bzq112";
