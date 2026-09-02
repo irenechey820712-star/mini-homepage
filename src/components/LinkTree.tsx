@@ -9,12 +9,14 @@ import {
   GUESTBOOK_LIMITS,
   addBangladeshEntry,
   addGuestbookEntry,
+  deleteEntry,
   isCounterEnabled,
   isFirebaseConfigured,
   isGuestbookEnabled,
   recordVisit,
   subscribeBangladesh,
   subscribeGuestbook,
+  updateEntryText,
   type RemoteEntry,
   type VisitCounts
 } from "@/lib/firebase";
@@ -345,6 +347,67 @@ function BoardTab() {
   );
 }
 
+/* 편집 모드에서 소유자에게만 보이는 글 수정·삭제 컨트롤입니다. */
+function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh"; id: string; text: string }) {
+  const { editing, owner } = useSiteEditor();
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState(text);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setDraft(text);
+  }, [text]);
+
+  if (!editing || !owner?.isOwner) return null;
+
+  const save = async () => {
+    setBusy(true);
+    try {
+      await updateEntryText(coll, id, draft);
+      setOpen(false);
+    } catch {
+      /* 무시 */
+    } finally {
+      setBusy(false);
+    }
+  };
+  const remove = async () => {
+    if (!window.confirm("이 글을 삭제할까요?")) return;
+    setBusy(true);
+    try {
+      await deleteEntry(coll, id);
+    } catch {
+      /* 무시 */
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  if (open) {
+    return (
+      <div className="cy-mod-edit">
+        <textarea value={draft} rows={2} onChange={e => setDraft(e.target.value)} />
+        <button className="cy-mod-btn" onClick={save} disabled={busy}>저장</button>
+        <button
+          className="cy-mod-btn"
+          onClick={() => {
+            setDraft(text);
+            setOpen(false);
+          }}
+        >
+          취소
+        </button>
+      </div>
+    );
+  }
+  return (
+    <div className="cy-mod-row">
+      <button className="cy-mod-btn" onClick={() => setOpen(true)}>✏️ 수정</button>
+      <button className="cy-mod-btn is-danger" onClick={remove} disabled={busy}>🗑 삭제</button>
+    </div>
+  );
+}
+
 function GuestbookForm() {
   const [author, setAuthor] = useState("");
   const [text, setText] = useState("");
@@ -370,22 +433,24 @@ function GuestbookForm() {
 
   return (
     <form className="cy-guestbook-form" onSubmit={submit}>
-      <input
-        className="cy-gb-author"
-        value={author}
-        onChange={e => setAuthor(e.target.value)}
-        placeholder="이름"
-        maxLength={GUESTBOOK_LIMITS.author}
-        aria-label="이름"
-      />
-      <input
-        className="cy-gb-text"
-        value={text}
-        onChange={e => setText(e.target.value)}
-        placeholder="한줄평을 남겨주세요"
-        maxLength={GUESTBOOK_LIMITS.text}
-        aria-label="한줄평"
-      />
+      <div className="cy-gb-row">
+        <input
+          className="cy-gb-author"
+          value={author}
+          onChange={e => setAuthor(e.target.value)}
+          placeholder="이름"
+          maxLength={GUESTBOOK_LIMITS.author}
+          aria-label="이름"
+        />
+        <input
+          className="cy-gb-text"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          placeholder="한줄평을 남겨주세요"
+          maxLength={GUESTBOOK_LIMITS.text}
+          aria-label="한줄평"
+        />
+      </div>
       <button className="cy-gb-submit" type="submit" disabled={sending}>
         {sending ? "전송중" : "남기기"}
       </button>
@@ -437,6 +502,7 @@ function GuestbookList() {
               </span>
               <span className="cg-text">{c.text}</span>
               <span className="cg-date">({c.date})</span>
+              {live ? <OwnerControls coll="guestbook" id={c.key} text={c.text} /> : null}
             </div>
           ))
         )}
@@ -607,6 +673,7 @@ function BangladeshTab() {
                 <span className="cg-date">({entry.date})</span>
               </div>
               <TranslatedMessage text={entry.text} />
+              <OwnerControls coll="bangladesh" id={entry.id} text={entry.text} />
             </div>
           ))}
         </div>

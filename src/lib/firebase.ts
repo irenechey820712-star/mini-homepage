@@ -16,6 +16,7 @@ import {
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getFirestore,
   limit as fsLimit,
@@ -25,6 +26,7 @@ import {
   runTransaction,
   serverTimestamp,
   setDoc,
+  updateDoc,
   type Firestore,
   type Timestamp
 } from "firebase/firestore";
@@ -220,6 +222,21 @@ export async function addGuestbookEntry(author: string, text: string) {
     approved: true,
     createdAt: serverTimestamp()
   });
+}
+
+/* 소유자 전용 — 한줄평 수정·삭제 (firestore.rules 에서 isOwner 로 잠금) */
+export async function updateEntryText(coll: "guestbook" | "bangladesh", id: string, text: string) {
+  const store = getDb();
+  if (!store) throw new Error("설정되지 않았습니다.");
+  const trimmed = text.trim();
+  if (!trimmed) throw new Error("내용을 비울 수 없습니다.");
+  await updateDoc(doc(store, coll, id), { text: trimmed });
+}
+
+export async function deleteEntry(coll: "guestbook" | "bangladesh", id: string) {
+  const store = getDb();
+  if (!store) throw new Error("설정되지 않았습니다.");
+  await deleteDoc(doc(store, coll, id));
 }
 
 /* ---------------------------------------------------------------
