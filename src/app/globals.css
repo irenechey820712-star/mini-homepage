@@ -1240,6 +1240,36 @@ body.lt-intro-open {
   }
 }
 
+/* 프로필 언어 전환 바 */
+.cy-lang-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.cy-lang-btn {
+  width: auto;
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 4px 11px;
+  border-radius: 999px;
+  border: 1px solid #C3A6EC;
+  background: #F3ECFB;
+  color: #6A55A8;
+  cursor: pointer;
+}
+.cy-lang-btn.is-active {
+  background: #7B5FBE;
+  border-color: #7B5FBE;
+  color: #fff;
+  font-weight: 700;
+}
+.cy-lang-loading {
+  font-size: 0.7rem;
+  color: #9C7BD0;
+}
+
 /* ------------------------------------- */
 /* 방글라데시 코너                          */
 /* ------------------------------------- */

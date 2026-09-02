@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Spiral, type SpiralProps } from "@paper-design/shaders-react";
 import { asset } from "@/lib/asset";
 import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
@@ -20,7 +20,7 @@ import {
   type RemoteEntry,
   type VisitCounts
 } from "@/lib/firebase";
-import { translateMessage, type TargetLang, type TranslationResult } from "@/lib/translate";
+import { translateMessage, translateTo, type TargetLang, type TranslationResult } from "@/lib/translate";
 import {
   boardPosts,
   episodes,
@@ -340,18 +340,88 @@ function HomeTab() {
   );
 }
 
+/* 프로필 섹션의 번역 가능한 모든 문자열을 한 번 모읍니다. */
+function collectProfileStrings(): string[] {
+  const set = new Set<string>();
+  const add = (s?: string) => {
+    if (s && s.trim()) set.add(s.trim());
+  };
+  for (const section of profileSections) {
+    add(section.title);
+    add(section.subtitle);
+    for (const block of section.blocks) {
+      if (block.kind === "text") block.lines.forEach(add);
+      else if (block.kind === "list") {
+        add(block.heading);
+        block.items.forEach(add);
+      } else if (block.kind === "image") add(block.caption);
+      else block.items.forEach(it => {
+        add(it.label);
+        add(it.value);
+      });
+    }
+  }
+  return [...set];
+}
+
+type ProfileLang = "ko" | "en" | "bn";
+const PROFILE_LANGS: { id: ProfileLang; label: string }[] = [
+  { id: "ko", label: "한국어" },
+  { id: "en", label: "English" },
+  { id: "bn", label: "বাংলা" }
+];
+
 function ProfileTab() {
+  const [lang, setLang] = useState<ProfileLang>("ko");
+  const [dict, setDict] = useState<Record<string, Record<string, string>>>({});
+  const [loading, setLoading] = useState(false);
+  const strings = useMemo(collectProfileStrings, []);
+
+  useEffect(() => {
+    if (lang === "ko" || dict[lang]) return;
+    let alive = true;
+    setLoading(true);
+    Promise.all(strings.map(s => translateTo(s, lang).then(t => [s, t] as const))).then(pairs => {
+      if (!alive) return;
+      setDict(d => ({ ...d, [lang]: Object.fromEntries(pairs) }));
+      setLoading(false);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [lang, strings, dict]);
+
+  const T = (s?: string) => {
+    if (!s) return s;
+    if (lang === "ko") return s;
+    return dict[lang]?.[s.trim()] ?? s;
+  };
+
   return (
     <>
+      <div className="cy-lang-bar">
+        {PROFILE_LANGS.map(l => (
+          <button
+            key={l.id}
+            type="button"
+            className={`cy-lang-btn${lang === l.id ? " is-active" : ""}`}
+            onClick={() => setLang(l.id)}
+          >
+            {l.label}
+          </button>
+        ))}
+        {loading ? <span className="cy-lang-loading">번역 중… · translating…</span> : null}
+      </div>
+
       {profileSections.map(section => (
         <div key={section.id} className="cy-content-box">
-          <SectionTitle title={section.title} sub={section.subtitle} />
+          <SectionTitle title={T(section.title)!} sub={T(section.subtitle)} />
           {section.blocks.map((block, bi) => {
             if (block.kind === "text") {
               return (
                 <div key={bi} className="cy-text-block">
                   {block.lines.map((line, i) => (
-                    <p key={i}>{line}</p>
+                    <p key={i}>{T(line)}</p>
                   ))}
                 </div>
               );
@@ -359,10 +429,10 @@ function ProfileTab() {
             if (block.kind === "list") {
               return (
                 <div key={bi} className="cy-profile-list-box">
-                  <div className="cy-profile-list-heading">{block.heading}</div>
+                  <div className="cy-profile-list-heading">{T(block.heading)}</div>
                   <ul className="cy-profile-list">
                     {block.items.map((item, i) => (
-                      <li key={i}>{item}</li>
+                      <li key={i}>{T(item)}</li>
                     ))}
                   </ul>
                 </div>
@@ -379,7 +449,7 @@ function ProfileTab() {
                   ) : (
                     img
                   )}
-                  {block.caption ? <figcaption>{block.caption}</figcaption> : null}
+                  {block.caption ? <figcaption>{T(block.caption)}</figcaption> : null}
                 </figure>
               );
             }
@@ -387,13 +457,13 @@ function ProfileTab() {
               <ul key={bi} className="cy-contact-list">
                 {block.items.map(item => (
                   <li key={item.href}>
-                    <span className="cy-contact-label">{item.label}</span>
+                    <span className="cy-contact-label">{T(item.label)}</span>
                     <a
                       href={item.href}
                       target={item.href.startsWith("mailto:") ? undefined : "_blank"}
                       rel="noopener noreferrer"
                     >
-                      {item.value}
+                      {T(item.value)}
                     </a>
                   </li>
                 ))}

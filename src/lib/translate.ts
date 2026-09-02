@@ -77,6 +77,16 @@ async function translateOne(text: string, source: SourceLang, target: TargetLang
   return null;
 }
 
+/* 특정 언어로만 번역합니다(프로필 섹션 번역용). 실패하면 원문을 그대로 돌려줍니다. */
+export async function translateTo(text: string, target: TargetLang): Promise<string> {
+  const trimmed = text.trim();
+  if (!trimmed) return text;
+  const source = detectLang(trimmed);
+  if (source === target) return text;
+  const out = await translateOne(trimmed, source, target);
+  return out ?? text;
+}
+
 export async function translateMessage(text: string): Promise<TranslationResult | null> {
   const trimmed = text.trim();
   if (!trimmed) return null;
