@@ -1226,6 +1226,27 @@ body.lt-intro-open {
   padding: 10px 12px;
   margin-bottom: 12px;
 }
+.cy-bd-lang {
+  font-weight: 700;
+  color: #7E5FC0;
+  margin-right: 3px;
+}
+.cy-bd-flag {
+  display: inline-block;
+  width: 1.35em;
+  height: auto;
+  vertical-align: -0.2em;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+.cy-tab-flag {
+  display: block;
+  width: 20px;
+  height: 12px;
+  margin: 0 auto 3px;
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
 .cy-bd-intro p {
   margin: 0 0 5px;
 }

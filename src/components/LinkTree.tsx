@@ -132,6 +132,16 @@ function ChevronDown({ size = 18 }: { size?: number }) {
   );
 }
 
+/* 방글라데시 국기를 이모지 크기의 작은 아이콘으로 그립니다. (윈도우는 🇧🇩 이모지를 지원하지 않음) */
+function BdFlag({ className = "cy-bd-flag" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 20 12" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="방글라데시 국기">
+      <rect width="20" height="12" fill="#006A4E" />
+      <circle cx="9" cy="6" r="3.6" fill="#F42A41" />
+    </svg>
+  );
+}
+
 function IntroOverlay({ onBrowse }: { onBrowse: () => void }) {
   const { text } = useSiteEditor();
   return (
@@ -566,11 +576,14 @@ function BangladeshTab() {
 
   return (
     <div className="cy-content-box">
-      <SectionTitle title="방글라데시 코너" sub="Bangladesh Corner · বাংলাদেশ কর্নার" />
+      <div className="cy-section-title">
+        <BdFlag /> 방글라데시 코너
+        <span className="cy-sub-text">Bangladesh Corner · বাংলাদেশ কর্নার</span>
+      </div>
       <div className="cy-bd-intro">
-        <p>🇰🇷 방글라데시 선생님들과 인사를 나누는 임시 코너입니다. 영어나 벵골어로 남겨 주세요 — 자동으로 번역됩니다.</p>
-        <p>🇬🇧 A temporary corner to greet teachers from Bangladesh. Write in English or Bengali — messages are auto-translated.</p>
-        <p>🇧🇩 বাংলাদেশের শিক্ষকদের সঙ্গে শুভেচ্ছা বিনিময়ের অস্থায়ী কর্নার। ইংরেজি বা বাংলায় লিখুন — বার্তা স্বয়ংক্রিয়ভাবে অনূদিত হবে।</p>
+        <p><span className="cy-bd-lang">한국어</span> 방글라데시 선생님들과 인사를 나누는 임시 코너입니다. 영어나 벵골어로 남겨 주세요 — 자동으로 번역됩니다.</p>
+        <p><span className="cy-bd-lang">English</span> A temporary corner to greet teachers from Bangladesh. Write in English or Bengali — messages are auto-translated.</p>
+        <p><BdFlag className="cy-bd-flag" /> <span className="cy-bd-lang">বাংলা</span> বাংলাদেশের শিক্ষকদের সঙ্গে শুভেচ্ছা বিনিময়ের অস্থায়ী কর্নার। ইংরেজি বা বাংলায় লিখুন — বার্তা স্বয়ংক্রিয়ভাবে অনূদিত হবে।</p>
       </div>
 
       {!live ? (
@@ -766,6 +779,7 @@ function LinkTreeInner() {
                   className={"cy-tab-btn " + (activeTab === tab ? "active" : "")}
                   onClick={() => setActiveTab(tab)}
                 >
+                  {tab === "bangladesh" ? <BdFlag className="cy-tab-flag" /> : null}
                   <span className="cy-tab-line">{NAV_LABELS[tab]}</span>
                 </button>
               ))}
