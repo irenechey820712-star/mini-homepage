@@ -603,7 +603,7 @@ function LinkTreeInner() {
               <div className="cy-right-header">
                 <span className="cy-title">{TAB_TITLES[activeTab]}</span>
                 <span className="cy-url-box">
-                  <span className="cy-url-icon" aria-hidden="true">🌐</span>
+                  <span className="cy-url-icon" aria-hidden="true">💜</span>
                   <EditableText as="span" className="cy-url" textKey="displayUrl" fallback={profile.displayUrl} />
                 </span>
               </div>
