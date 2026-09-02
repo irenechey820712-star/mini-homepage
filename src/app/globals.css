@@ -1252,6 +1252,9 @@ body.lt-intro-open {
   color: #999;
   font-weight: normal;
 }
+.cy-name-heart {
+  font-size: 0.82em;
+}
 .cy-bd-original {
   font-size: 0.82rem;
   color: #333;

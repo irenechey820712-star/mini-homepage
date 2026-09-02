@@ -423,7 +423,7 @@ function GuestbookList() {
           pageEntries.map(c => (
             <div key={c.key} className="cy-guestbook-item">
               <span className="cg-author">
-                {c.author} <span className="cg-colon">:</span>{" "}
+                <span className="cy-name-heart" aria-hidden="true">💜</span> {c.author} <span className="cg-colon">:</span>{" "}
               </span>
               <span className="cg-text">{c.text}</span>
               <span className="cg-date">({c.date})</span>
@@ -584,7 +584,8 @@ function BangladeshTab() {
           {remote.map(entry => (
             <div key={entry.id} className="cy-bd-item">
               <div className="cy-bd-head">
-                <b>{entry.author}</b> <span className="cg-date">({entry.date})</span>
+                <b><span className="cy-name-heart" aria-hidden="true">💜</span> {entry.author}</b>{" "}
+                <span className="cg-date">({entry.date})</span>
               </div>
               <TranslatedMessage text={entry.text} />
             </div>
