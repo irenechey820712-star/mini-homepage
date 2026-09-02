@@ -139,40 +139,40 @@ export const boardPosts: BoardPost[] = [
   {
     id: "canva-materials",
     category: "글",
-    title: "수업·활동 자료 · Teaching & Activity Deck · শিক্ষা ও কার্যক্রম উপস্থাপনা",
-    summary: "Canva로 만든 소개 자료 · A Canva deck introducing my work · আমার কাজের ক্যানভা উপস্থাপনা",
+    title: "나만의 AI 영상 만들기 · Create Your Own AI Video · নিজের AI ভিডিও তৈরি করুন",
+    summary: "AI 영상 제작 안내 자료 (Canva) · A Canva guide to making your own AI video · নিজের AI ভিডিও তৈরির ক্যানভা গাইড",
     date: "2026",
     href: "https://canva.link/yuczzd3dcuhzf89"
   },
   {
     id: "english-challenge-s2",
     category: "앱",
-    title: "아이린쌤 영어 챌린지 Season 2",
-    summary: "한국인 학습자를 위한 인터랙티브 영어 학습 챌린지 (Google Apps Script 웹앱)",
+    title: "아이린쌤 영어 챌린지 시즌 2 · Irene's English Challenge S2 · আইরিন ম্যামের ইংরেজি চ্যালেঞ্জ সিজন ২",
+    summary: "인터랙티브 영어 학습 챌린지 · An interactive English learning challenge · একটি ইন্টারেক্টিভ ইংরেজি শেখার চ্যালেঞ্জ",
     date: "2026",
     href: "https://script.google.com/macros/s/AKfycbwltlu2OSnlw6sa_7y1QwKo2vUbN51uL6K2U1jdHDjEfe3XMQiRh60IHI6KbHuAxOrZrA/exec"
   },
   {
     id: "fan-story-mini-zine",
     category: "앱",
-    title: "My Fan Story Mini Zine",
-    summary: "나만의 팬픽 이야기를 미니 진(zine) 형식으로 만들고 공유하는 웹앱",
+    title: "마이 팬 스토리 미니진 · My Fan Story Mini Zine · মাই ফ্যান স্টোরি মিনি জিন",
+    summary: "나만의 팬픽을 미니 진(zine)으로 만들기 · Turn your fan fiction into a mini zine · নিজের ফ্যান ফিকশনকে মিনি জিনে রূপ দিন",
     date: "2026",
     href: "https://script.google.com/macros/s/AKfycbwiKYywdYYo52BGJ8qnUTii7VkKjOrMYC_hr3QiEkPAJM7ls2A4ITKTDF9TOM5GfnRU/exec"
   },
   {
     id: "first-fishing-ai",
     category: "앱",
-    title: "첫낚시 AI",
-    summary: "공공데이터 기반 초보자 바다낚시 안전 출조 안내 서비스",
+    title: "첫낚시 AI · First Fishing AI · প্রথম মাছ ধরা AI",
+    summary: "공공데이터 기반 초보자 바다낚시 안전 출조 안내 · Public-data-based safe sea-fishing guide for beginners · সরকারি তথ্যভিত্তিক নতুনদের নিরাপদ সমুদ্রে মাছ ধরার গাইড",
     date: "2026",
     href: "https://irenechey820712-star.github.io/myfirstfishing/"
   },
   {
     id: "ai-creative-mission",
     category: "앱",
-    title: "AI Creative Mission — 방글라데시 교원 연수 웹앱",
-    summary: "캐릭터 시트 → 포스터 → 스토리보드 → 30초 영상까지 잇는 AI 창작 미션 플랫폼",
+    title: "AI 창작 미션 — 방글라데시 교원 연수 · AI Creative Mission — Bangladesh Teacher Training · AI ক্রিয়েটিভ মিশন — বাংলাদেশ শিক্ষক প্রশিক্ষণ",
+    summary: "캐릭터 → 포스터 → 스토리보드 → 30초 영상 제작 플랫폼 · Character → poster → storyboard → 30-second video platform · চরিত্র → পোস্টার → স্টোরিবোর্ড → ৩০ সেকেন্ডের ভিডিও প্ল্যাটফর্ম",
     date: "2026.08",
     href: "https://irenechey820712-star.github.io/ai-creative-mission/"
   }
