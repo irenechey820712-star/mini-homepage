@@ -319,6 +319,94 @@ function SectionTitle({ title, sub }: { title: string; sub?: string }) {
   );
 }
 
+/* 미니룸 위를 방향키로 걸어다니는 캐릭터입니다. 기본은 꺼져 있고, 버튼으로 켜고 끕니다.
+   켬 여부와 위치는 이 브라우저(localStorage)에만 저장됩니다. */
+const ARROWS = ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"];
+
+function MiniRoomCharacter() {
+  const [on, setOn] = useState(false);
+  const [pos, setPos] = useState({ x: 50, y: 72 });
+  const [face, setFace] = useState(1);
+
+  useEffect(() => {
+    try {
+      setOn(localStorage.getItem("acm_miniroom_char") === "on");
+      const raw = localStorage.getItem("acm_miniroom_pos");
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p?.x === "number" && typeof p?.y === "number") setPos({ x: p.x, y: p.y });
+      }
+    } catch {
+      /* 저장소를 못 읽어도 기본값으로 동작 */
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!on) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!ARROWS.includes(e.key)) return;
+      const ae = document.activeElement as HTMLElement | null;
+      if (ae && (ae.tagName === "INPUT" || ae.tagName === "TEXTAREA" || ae.isContentEditable)) return;
+      e.preventDefault();
+      setPos(p => {
+        const step = 5;
+        let x = p.x;
+        let y = p.y;
+        if (e.key === "ArrowLeft") {
+          x -= step;
+          setFace(-1);
+        } else if (e.key === "ArrowRight") {
+          x += step;
+          setFace(1);
+        } else if (e.key === "ArrowUp") {
+          y -= step;
+        } else {
+          y += step;
+        }
+        x = Math.max(4, Math.min(96, x));
+        y = Math.max(8, Math.min(94, y));
+        const np = { x, y };
+        try {
+          localStorage.setItem("acm_miniroom_pos", JSON.stringify(np));
+        } catch {
+          /* 저장 실패는 무시 */
+        }
+        return np;
+      });
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [on]);
+
+  const toggle = () => {
+    setOn(v => {
+      const nv = !v;
+      try {
+        localStorage.setItem("acm_miniroom_char", nv ? "on" : "off");
+      } catch {
+        /* 무시 */
+      }
+      return nv;
+    });
+  };
+
+  return (
+    <>
+      <button type="button" className="cy-miniroom-toy" onClick={toggle}>
+        {on ? "🕹️ 끄기" : "🕹️ 캐릭터 놀기"}
+      </button>
+      {on ? (
+        <>
+          <div className="cy-miniroom-hint">방향키 ↑ ↓ ← → 로 이동</div>
+          <div className="cy-miniroom-char" style={{ left: `${pos.x}%`, top: `${pos.y}%` }}>
+            <span style={{ display: "inline-block", transform: `scaleX(${face})` }}>🚶‍♀️</span>
+          </div>
+        </>
+      ) : null}
+    </>
+  );
+}
+
 function HomeTab() {
   return (
     <>
@@ -329,6 +417,7 @@ function HomeTab() {
         </div>
         <div className="cy-miniroom-inner">
           <img src={asset(profile.miniroom.src)} alt={profile.miniroom.alt} />
+          <MiniRoomCharacter />
         </div>
       </div>
 
