@@ -242,7 +242,7 @@ export async function deleteEntry(coll: "guestbook" | "bangladesh", id: string) 
 /* ---------------------------------------------------------------
    방글라데시 코너 (영어·벵골어 메시지, 읽을 때 자동 번역)
    --------------------------------------------------------------- */
-export const BANGLADESH_LIMITS = { author: 40, text: 500 } as const;
+export const BANGLADESH_LIMITS = { author: 40, text: 2000 } as const;
 
 export function subscribeBangladesh(
   count: number,

@@ -60,7 +60,7 @@ service cloud.firestore {
         && request.resource.data.author.size() <= 40
         && request.resource.data.text is string
         && request.resource.data.text.size() >= 1
-        && request.resource.data.text.size() <= 500
+        && request.resource.data.text.size() <= 2000
         && request.resource.data.createdAt == request.time;
 
       /* 소유자는 수정·삭제(모더레이션) 가능 */
