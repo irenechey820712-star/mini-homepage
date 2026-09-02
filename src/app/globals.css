@@ -161,6 +161,11 @@ body.lt-intro-open {
   width: 100%;
   height: 100%;
 }
+/* 투명 젤리 하트는 은은한 보라 글로우를 얹습니다 */
+.cy-heart-jelly {
+  filter: drop-shadow(0 14px 24px rgba(123, 95, 190, 0.28))
+    drop-shadow(0 0 16px rgba(184, 150, 235, 0.4));
+}
 @media (max-width: 960px) {
   .cy-heart-brush { display: none; }
 }

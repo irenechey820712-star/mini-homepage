@@ -145,9 +145,12 @@ export function EditableText({
 
 /* 왼쪽 아래 고정 편집바입니다. */
 export function EditBar() {
-  const { ready, owner, editing, setEditing, status } = useSiteEditor();
+  const { ready, owner, editing, setEditing, status, text, save } = useSiteEditor();
   const [busy, setBusy] = useState(false);
   const [copied, setCopied] = useState(false);
+
+  const heartStyle = text("heartStyle", "jelly") === "brush" ? "brush" : "jelly";
+  const toggleHeart = () => save("heartStyle", heartStyle === "jelly" ? "brush" : "jelly");
 
   if (!ready) return null;
 
@@ -207,6 +210,11 @@ export function EditBar() {
           >
             {editing ? "✅ 편집 완료" : "✏️ 편집"}
           </button>
+          {editing && (
+            <button type="button" className="cy-editbar-mini" onClick={toggleHeart}>
+              하트: {heartStyle === "jelly" ? "젤리" : "붓터치"} ⇄
+            </button>
+          )}
           <button type="button" className="cy-editbar-mini" onClick={() => signOutOwner()}>
             로그아웃
           </button>

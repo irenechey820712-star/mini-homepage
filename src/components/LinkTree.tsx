@@ -84,44 +84,93 @@ const introStyle = {
   "--body": "'Pretendard', 'Noto Sans KR', system-ui, sans-serif"
 } as React.CSSProperties;
 
-/* 메인 화면 프레임 모서리에 걸쳐지는 붓터치 느낌의 연보라 하트 장식입니다. */
-function HeartBrush() {
-  const d =
-    "M100 164C60 138 33 113 27 83C21 53 42 31 66 34C85 36 96 49 100 61C104 49 115 36 134 34C158 31 179 53 173 83C167 113 140 138 100 164Z";
+/* 메인 화면 프레임 모서리에 걸쳐지는 연보라 하트 장식입니다.
+   style="jelly" (투명 젤리) 또는 "brush" (붓터치) 중에서 그립니다. */
+const HEART_PATH =
+  "M100 164C60 138 33 113 27 83C21 53 42 31 66 34C85 36 96 49 100 61C104 49 115 36 134 34C158 31 179 53 173 83C167 113 140 138 100 164Z";
+
+function HeartBrushSvg() {
   return (
-    <span className="cy-heart-brush" aria-hidden="true">
-      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <filter id="heartBrushA" x="-30%" y="-30%" width="160%" height="160%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.017 0.024" numOctaves="3" seed="11" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <filter id="heartBrushB" x="-30%" y="-30%" width="160%" height="160%">
-            <feTurbulence type="fractalNoise" baseFrequency="0.03 0.02" numOctaves="2" seed="29" result="n" />
-            <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
-          </filter>
-          <linearGradient id="heartFill" x1="0" y1="0" x2="0.2" y2="1">
-            <stop offset="0" stopColor="#DED0F6" />
-            <stop offset="0.55" stopColor="#C3A6EC" />
-            <stop offset="1" stopColor="#AE8AE1" />
-          </linearGradient>
-        </defs>
-        <path
-          d={d}
-          filter="url(#heartBrushA)"
-          transform="translate(100 100) scale(1.06) rotate(-7) translate(-100 -100)"
-          fill="#E7DCF8"
-          opacity="0.5"
-        />
-        <path d={d} filter="url(#heartBrushA)" fill="url(#heartFill)" opacity="0.92" />
-        <path d={d} filter="url(#heartBrushB)" fill="none" stroke="#9E7BD6" strokeWidth="3.5" opacity="0.55" />
-        <path
-          d="M64 46C52 55 47 69 49 82C58 62 71 52 86 51C80 46 72 43 64 46Z"
-          filter="url(#heartBrushB)"
-          fill="#F3ECFB"
-          opacity="0.55"
-        />
-      </svg>
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="heartBrushA" x="-30%" y="-30%" width="160%" height="160%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.017 0.024" numOctaves="3" seed="11" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="16" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <filter id="heartBrushB" x="-30%" y="-30%" width="160%" height="160%">
+          <feTurbulence type="fractalNoise" baseFrequency="0.03 0.02" numOctaves="2" seed="29" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="9" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+        <linearGradient id="heartFill" x1="0" y1="0" x2="0.2" y2="1">
+          <stop offset="0" stopColor="#DED0F6" />
+          <stop offset="0.55" stopColor="#C3A6EC" />
+          <stop offset="1" stopColor="#AE8AE1" />
+        </linearGradient>
+      </defs>
+      <path
+        d={HEART_PATH}
+        filter="url(#heartBrushA)"
+        transform="translate(100 100) scale(1.06) rotate(-7) translate(-100 -100)"
+        fill="#E7DCF8"
+        opacity="0.5"
+      />
+      <path d={HEART_PATH} filter="url(#heartBrushA)" fill="url(#heartFill)" opacity="0.92" />
+      <path d={HEART_PATH} filter="url(#heartBrushB)" fill="none" stroke="#9E7BD6" strokeWidth="3.5" opacity="0.55" />
+      <path
+        d="M64 46C52 55 47 69 49 82C58 62 71 52 86 51C80 46 72 43 64 46Z"
+        filter="url(#heartBrushB)"
+        fill="#F3ECFB"
+        opacity="0.55"
+      />
+    </svg>
+  );
+}
+
+function HeartJellySvg() {
+  return (
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="jellyFill" cx="40%" cy="32%" r="80%">
+          <stop offset="0" stopColor="#EFE6FB" stopOpacity="0.82" />
+          <stop offset="50%" stopColor="#BE97EA" stopOpacity="0.5" />
+          <stop offset="100%" stopColor="#8A61C6" stopOpacity="0.38" />
+        </radialGradient>
+        <linearGradient id="jellyRim" x1="0" y1="0" x2="0.15" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.95" />
+          <stop offset="0.5" stopColor="#ffffff" stopOpacity="0.12" />
+          <stop offset="1" stopColor="#B98FE6" stopOpacity="0.55" />
+        </linearGradient>
+        <filter id="jellyGel" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="b" />
+          <feSpecularLighting in="b" surfaceScale="5" specularConstant="0.9" specularExponent="16" lightingColor="#ffffff" result="s">
+            <fePointLight x="62" y="34" z="120" />
+          </feSpecularLighting>
+          <feComposite in="s" in2="SourceAlpha" operator="in" result="sc" />
+          <feComposite in="SourceGraphic" in2="sc" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+        </filter>
+        <filter id="jellyBlur" x="-60%" y="-60%" width="220%" height="220%">
+          <feGaussianBlur stdDeviation="6" />
+        </filter>
+      </defs>
+      <path d={HEART_PATH} fill="url(#jellyFill)" stroke="url(#jellyRim)" strokeWidth="2.5" filter="url(#jellyGel)" />
+      <path
+        d="M70 40C51 51 43 71 48 90C65 66 85 54 106 52C97 41 84 35 70 40Z"
+        fill="#ffffff"
+        opacity="0.4"
+        filter="url(#jellyBlur)"
+      />
+      <ellipse cx="72" cy="52" rx="13" ry="8" fill="#ffffff" opacity="0.85" transform="rotate(-28 72 52)" />
+      <ellipse cx="122" cy="58" rx="5" ry="3.5" fill="#ffffff" opacity="0.6" transform="rotate(-18 122 58)" />
+    </svg>
+  );
+}
+
+function HeartDeco() {
+  const { text } = useSiteEditor();
+  const style = text("heartStyle", "jelly") === "brush" ? "brush" : "jelly";
+  return (
+    <span className={`cy-heart-brush cy-heart-${style}`} aria-hidden="true">
+      {style === "brush" ? <HeartBrushSvg /> : <HeartJellySvg />}
     </span>
   );
 }
@@ -860,7 +909,7 @@ function LinkTreeInner() {
 
           </div>
         </div>
-        <HeartBrush />
+        <HeartDeco />
       </div>
 
       {!introSkipped ? (
