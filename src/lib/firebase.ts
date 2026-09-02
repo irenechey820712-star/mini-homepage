@@ -1,8 +1,18 @@
-/* Firestore 한줄평 저장소입니다.
-   설정값은 빌드 시 NEXT_PUBLIC_FIREBASE_* 환경변수로 주입됩니다.
-   Firebase 웹 설정값은 비밀키가 아니라 프로젝트 식별자이며, 배포된 JS 에 그대로 들어가는 것이
-   정상적인 사용법입니다. 실제 접근 제어는 firestore.rules 가 담당합니다. */
+/* Firebase 연동 계층입니다.
+   - 한줄평(방명록) + 방문 수: 로그인 없이 누구나 읽고, 방명록은 누구나 한 줄 남깁니다.
+   - 사이트 콘텐츠(site/content): 읽기는 누구나, 쓰기는 소유자(OWNER_UID)만.
+   Firebase 웹 설정값은 비밀키가 아니라 프로젝트 식별자이며, 배포된 JS 에 들어가는 것이 정상입니다.
+   실제 접근 제어는 firestore.rules 가 담당합니다. */
 import { initializeApp, getApps, type FirebaseApp } from "firebase/app";
+import {
+  GoogleAuthProvider,
+  getAuth,
+  onAuthStateChanged,
+  signInWithPopup,
+  signOut as fbSignOut,
+  type Auth,
+  type User
+} from "firebase/auth";
 import {
   addDoc,
   collection,
@@ -14,21 +24,19 @@ import {
   query,
   runTransaction,
   serverTimestamp,
+  setDoc,
   type Firestore,
   type Timestamp
 } from "firebase/firestore";
+import { firebaseConfig, OWNER_UID } from "@/config/site";
 
-const config = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID
-};
-
-/* 설정이 없으면 Firestore 를 쓰지 않고, 화면은 linktree.ts 의 예시 한줄평으로 대체됩니다. */
-export const isGuestbookEnabled = Boolean(config.apiKey && config.projectId);
+/* 설정이 없으면 Firestore/Auth 를 쓰지 않고, 화면은 linktree.ts 예시값으로 동작합니다. */
+export const isFirebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId);
+export const isGuestbookEnabled = isFirebaseConfigured;
+export const isCounterEnabled = isFirebaseConfigured;
+/* 편집 기능은 소유자 UID 까지 있어야 켜집니다. UID 가 없으면 로그인 버튼만 떠서 UID 를 확인할 수 있습니다. */
+export const isEditingConfigured = isFirebaseConfigured;
+export { OWNER_UID };
 
 export const GUESTBOOK_LIMITS = { author: 20, text: 100 } as const;
 
@@ -41,14 +49,24 @@ export type RemoteEntry = {
 
 let app: FirebaseApp | null = null;
 let db: Firestore | null = null;
+let auth: Auth | null = null;
+
+function getFirebaseApp() {
+  if (!isFirebaseConfigured) return null;
+  if (!app) app = getApps()[0] ?? initializeApp(firebaseConfig as Record<string, string>);
+  return app;
+}
 
 function getDb() {
-  if (!isGuestbookEnabled) return null;
-  if (!db) {
-    app = getApps()[0] ?? initializeApp(config as Record<string, string>);
-    db = getFirestore(app);
-  }
+  if (!isFirebaseConfigured) return null;
+  if (!db) db = getFirestore(getFirebaseApp()!);
   return db;
+}
+
+function getAuthInstance() {
+  if (!isFirebaseConfigured) return null;
+  if (!auth) auth = getAuth(getFirebaseApp()!);
+  return auth;
 }
 
 function formatDate(value: unknown) {
@@ -62,22 +80,73 @@ function formatDate(value: unknown) {
 }
 
 /* ---------------------------------------------------------------
-   미니홈피 왼쪽 위 TODAY / TOTAL 방문 수입니다.
-   counters/site 문서 하나에 total, today, day 를 담아 둡니다.
+   소유자 로그인 (Google)
    --------------------------------------------------------------- */
+export type OwnerState = { uid: string; name: string; isOwner: boolean } | null;
 
-/* 한줄평과 같은 Firebase 설정을 씁니다. */
-export const isCounterEnabled = isGuestbookEnabled;
+export function watchAuth(cb: (state: OwnerState) => void) {
+  const a = getAuthInstance();
+  if (!a) {
+    cb(null);
+    return () => {};
+  }
+  return onAuthStateChanged(a, (user: User | null) => {
+    if (!user) {
+      cb(null);
+      return;
+    }
+    cb({
+      uid: user.uid,
+      name: user.displayName || user.email || "로그인됨",
+      isOwner: Boolean(OWNER_UID) && user.uid === OWNER_UID
+    });
+  });
+}
 
+export async function signInOwner() {
+  const a = getAuthInstance();
+  if (!a) throw new Error("로그인 기능이 설정되지 않았습니다.");
+  await signInWithPopup(a, new GoogleAuthProvider());
+}
+
+export async function signOutOwner() {
+  const a = getAuthInstance();
+  if (a) await fbSignOut(a);
+}
+
+/* ---------------------------------------------------------------
+   사이트 콘텐츠 (site/content 문서 하나에 편집 가능한 값들을 담습니다)
+   --------------------------------------------------------------- */
+export type SiteContent = Record<string, unknown>;
+
+export function watchSiteContent(cb: (content: SiteContent) => void) {
+  const store = getDb();
+  if (!store) {
+    cb({});
+    return () => {};
+  }
+  return onSnapshot(
+    doc(store, "site", "content"),
+    snap => cb((snap.exists() ? snap.data() : {}) as SiteContent),
+    () => cb({})
+  );
+}
+
+export async function saveSiteContent(patch: SiteContent) {
+  const store = getDb();
+  if (!store) throw new Error("편집 기능이 설정되지 않았습니다.");
+  await setDoc(doc(store, "site", "content"), patch, { merge: true });
+}
+
+/* ---------------------------------------------------------------
+   방문 수 (counters/site)
+   --------------------------------------------------------------- */
 export type VisitCounts = { total: number; today: number };
 
-/* 하루 경계를 방문자 시간대가 아니라 한국 시간으로 맞춥니다. 2026-08-14 형태입니다. */
 function seoulDay() {
   return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Seoul" }).format(new Date());
 }
 
-/* 방문 한 번을 기록하고 갱신된 값을 돌려줍니다.
-   읽기와 쓰기를 한 트랜잭션으로 처리해서 동시에 들어와도 숫자가 어긋나지 않습니다. */
 export async function recordVisit(): Promise<VisitCounts> {
   const store = getDb();
   if (!store) throw new Error("방문 수 기능이 설정되지 않았습니다.");
@@ -96,7 +165,6 @@ export async function recordVisit(): Promise<VisitCounts> {
 
     const data = snapshot.data();
     const total = Number(data.total ?? 0) + 1;
-    /* 날짜가 바뀐 뒤 첫 방문이면 오늘 수를 다시 1부터 셉니다. */
     const today = data.day === day ? Number(data.today ?? 0) + 1 : 1;
 
     transaction.update(ref, { total, today, day });
@@ -104,7 +172,9 @@ export async function recordVisit(): Promise<VisitCounts> {
   });
 }
 
-/* 한줄평을 실시간으로 구독합니다. 정리 함수를 돌려줍니다. */
+/* ---------------------------------------------------------------
+   한줄평 (guestbook)
+   --------------------------------------------------------------- */
 export function subscribeGuestbook(
   count: number,
   onData: (entries: RemoteEntry[]) => void,
@@ -118,10 +188,10 @@ export function subscribeGuestbook(
     q,
     snapshot => {
       onData(
-        snapshot.docs.map(doc => {
-          const data = doc.data();
+        snapshot.docs.map(entry => {
+          const data = entry.data();
           return {
-            id: doc.id,
+            id: entry.id,
             author: String(data.author ?? ""),
             text: String(data.text ?? ""),
             date: formatDate(data.createdAt)
@@ -144,8 +214,6 @@ export async function addGuestbookEntry(author: string, text: string) {
   if (trimmedAuthor.length > GUESTBOOK_LIMITS.author) throw new Error(`이름은 ${GUESTBOOK_LIMITS.author}자까지 쓸 수 있어요.`);
   if (trimmedText.length > GUESTBOOK_LIMITS.text) throw new Error(`한줄평은 ${GUESTBOOK_LIMITS.text}자까지 쓸 수 있어요.`);
 
-  /* approved 는 지금은 항상 true 입니다. 나중에 승인제로 바꾸려면
-     이 값을 false 로 두고 firestore.rules 의 read 조건만 바꾸면 됩니다. */
   await addDoc(collection(store, "guestbook"), {
     author: trimmedAuthor,
     text: trimmedText,

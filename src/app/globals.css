@@ -1203,3 +1203,96 @@ body.lt-intro-open {
     min-width: 52px;
   }
 }
+
+/* ------------------------------------- */
+/* 소유자 편집 UI                          */
+/* ------------------------------------- */
+.cy-editbar {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 120;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  max-width: min(92vw, 560px);
+  padding: 8px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #C3A6EC;
+  box-shadow: 0 10px 26px rgba(70, 58, 107, 0.24);
+  backdrop-filter: blur(6px);
+  font-size: 0.74rem;
+  color: #463A6B;
+}
+.cy-editbar-btn {
+  width: auto;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #9E7BD6;
+  background: #7B5FBE;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+.cy-editbar-btn.is-on {
+  background: #fff;
+  color: #6A55A8;
+}
+.cy-editbar-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+.cy-editbar-mini {
+  width: auto;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid #C3A6EC;
+  background: #F3ECFB;
+  color: #6A55A8;
+  font-size: 0.7rem;
+  cursor: pointer;
+}
+.cy-editbar-uid {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  line-height: 1.4;
+}
+.cy-editbar-uid code {
+  font-family: "Consolas", "Menlo", monospace;
+  font-size: 0.68rem;
+  background: #EFE1FA;
+  padding: 2px 6px;
+  border-radius: 5px;
+  word-break: break-all;
+}
+.cy-editbar-uid em {
+  color: #9C7BD0;
+  font-style: normal;
+}
+.cy-editbar-status {
+  font-weight: 700;
+  color: #9C7BD0;
+}
+.cy-editbar-status.is-ok { color: #4CA771; }
+.cy-editbar-status.is-err { color: #c0392b; }
+
+.cy-edit-field {
+  width: 100%;
+  max-width: 100%;
+  font: inherit;
+  color: inherit;
+  padding: 3px 6px;
+  border: 1px dashed #9E7BD6;
+  border-radius: 6px;
+  background: rgba(243, 236, 251, 0.7);
+}
+textarea.cy-edit-field {
+  resize: vertical;
+  line-height: 1.4;
+}
+

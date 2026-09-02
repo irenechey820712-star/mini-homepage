@@ -13,6 +13,24 @@ rules_version = '2';
    create 조건의 approved == true 를 approved == false 로 바꾸면 됩니다. */
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    /* 사이트 소유자(미니홈피 주인)의 Firebase Auth UID 입니다.
+       배포된 사이트에서 Google 로그인을 한 번 하면 편집바에 내 UID 가 표시됩니다.
+       그 값으로 아래 문자열을 바꾸고, src/config/site.ts 의 OWNER_UID 도 같게 맞춘 뒤
+       이 규칙을 다시 게시(Publish)하세요. */
+    function ownerUid() {
+      return "REPLACE_WITH_OWNER_UID";
+    }
+    function isOwner() {
+      return request.auth != null && request.auth.uid == ownerUid();
+    }
+
+    /* 편집 가능한 사이트 콘텐츠입니다. 누구나 읽고, 소유자만 씁니다. */
+    match /site/content {
+      allow read: if true;
+      allow write: if isOwner();
+    }
+
     match /guestbook/{entryId} {
       allow read: if true;
 

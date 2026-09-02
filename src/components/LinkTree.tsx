@@ -24,6 +24,7 @@ import {
   waveLinks
 } from "@/config/linktree";
 import { theme } from "@/config/theme";
+import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
 const ALL_TABS = ["home", "profile", "story", "board", "photo"] as const;
 type TabName = (typeof ALL_TABS)[number];
@@ -125,12 +126,13 @@ function ChevronDown({ size = 18 }: { size?: number }) {
 }
 
 function IntroOverlay({ onBrowse }: { onBrowse: () => void }) {
+  const { text } = useSiteEditor();
   return (
     <div className="lt-intro" style={introStyle}>
       <Spiral className="lt-intro-spiral" {...spiralProps} />
       <div className="lt-intro-card">
-        <span className="lt-intro-title">{profile.introTitle}</span>
-        <p className="lt-intro-copy">{profile.introDescription}</p>
+        <span className="lt-intro-title">{text("introTitle", profile.introTitle)}</span>
+        <p className="lt-intro-copy">{text("introDescription", profile.introDescription)}</p>
         <button type="button" className="lt-intro-cta" onClick={onBrowse}>
           모든 활동 구경하기
           <ChevronDown size={18} />
@@ -161,7 +163,10 @@ function HomeTab() {
   return (
     <>
       <div className="cy-content-box cy-miniroom-box">
-        <SectionTitle title="Mini Room" sub="미니룸" />
+        <div className="cy-section-title">
+          <EditableText textKey="miniroomTitle" fallback="Mini Room" />
+          <EditableText as="span" className="cy-sub-text" textKey="miniroomSub" fallback="미니룸" />
+        </div>
         <div className="cy-miniroom-inner">
           <img src={asset(profile.miniroom.src)} alt={profile.miniroom.alt} />
         </div>
@@ -469,6 +474,14 @@ function PhotoTab() {
 }
 
 export default function LinkTree() {
+  return (
+    <SiteEditorProvider>
+      <LinkTreeInner />
+    </SiteEditorProvider>
+  );
+}
+
+function LinkTreeInner() {
   const [activeTab, setActiveTab] = useState<TabName>("home");
   const [introSkipped, setIntroSkipped] = useState(false);
   const bgmRef = useRef<BgmHandle>(null);
@@ -496,6 +509,7 @@ export default function LinkTree() {
   return (
     <div className="cy-root">
       <div className="cy-background-pattern"></div>
+      <EditBar />
 
       <div className="cy-book-wrapper">
         <div className="cy-book-outer">
@@ -520,15 +534,19 @@ export default function LinkTree() {
                   <img src={asset(profile.photo.src)} alt={profile.photo.alt} />
                 </div>
 
-                <div className="cy-intro-text">
-                  {profile.introDescription}
-                </div>
+                <EditableText
+                  as="div"
+                  className="cy-intro-text"
+                  textKey="introDescription"
+                  fallback={profile.introDescription}
+                  multiline
+                />
 
                 <BgmPlayer ref={bgmRef} />
 
                 <div className="cy-profile-name">
-                  <div className="name-bold">{profile.teacherName}</div>
-                  <div className="title-sub">{profile.catalogDescription}</div>
+                  <EditableText as="div" className="name-bold" textKey="teacherName" fallback={profile.teacherName} />
+                  <EditableText as="div" className="title-sub" textKey="catalogDescription" fallback={profile.catalogDescription} />
                 </div>
 
                 <div className="cy-left-dropdown">
@@ -554,7 +572,7 @@ export default function LinkTree() {
             <div className="cy-right-panel">
               <div className="cy-right-header">
                 <span className="cy-title">{TAB_TITLES[activeTab]}</span>
-                <span className="cy-url">{profile.displayUrl}</span>
+                <EditableText as="span" className="cy-url" textKey="displayUrl" fallback={profile.displayUrl} />
               </div>
 
               <div className="cy-right-content">
