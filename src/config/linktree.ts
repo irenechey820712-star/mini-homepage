@@ -80,35 +80,35 @@ export type BoardPost = {
 
 export const boardPosts: BoardPost[] = [
   {
+    id: "english-challenge-s2",
+    category: "앱",
+    title: "아이린쌤 영어 챌린지 Season 2",
+    summary: "한국인 학습자를 위한 인터랙티브 영어 학습 챌린지 (Google Apps Script 웹앱)",
+    date: "2026",
+    href: "https://script.google.com/macros/s/AKfycbwltlu2OSnlw6sa_7y1QwKo2vUbN51uL6K2U1jdHDjEfe3XMQiRh60IHI6KbHuAxOrZrA/exec"
+  },
+  {
+    id: "fan-story-mini-zine",
+    category: "앱",
+    title: "My Fan Story Mini Zine",
+    summary: "나만의 팬픽 이야기를 미니 진(zine) 형식으로 만들고 공유하는 웹앱",
+    date: "2026",
+    href: "https://script.google.com/macros/s/AKfycbwiKYywdYYo52BGJ8qnUTii7VkKjOrMYC_hr3QiEkPAJM7ls2A4ITKTDF9TOM5GfnRU/exec"
+  },
+  {
+    id: "first-fishing-ai",
+    category: "앱",
+    title: "첫낚시 AI",
+    summary: "공공데이터 기반 초보자 바다낚시 안전 출조 안내 서비스",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/myfirstfishing/"
+  },
+  {
     id: "ai-creative-mission",
     category: "앱",
     title: "AI Creative Mission — 방글라데시 교원 연수 웹앱",
     summary: "캐릭터 시트 → 포스터 → 스토리보드 → 30초 영상까지 잇는 AI 창작 미션 플랫폼",
     date: "2026.08",
-    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
-  },
-  {
-    id: "bd-2026-textbook",
-    category: "글",
-    title: "2026 방글라데시 교원초청 디지털 세계화 연수 교재",
-    summary: "ICT·생성형 AI 활용 수업을 위한 연수 교재 집필·개편",
-    date: "2026.07",
-    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
-  },
-  {
-    id: "ai-video-mission",
-    category: "앱",
-    title: "AI 영상 제작 미션 · Meta AI 6-클립 영상 키트",
-    summary: "5초 클립 6개를 이어 붙여 30초 영상을 완성하는 모바일 제작 워크플로",
-    date: "2026.07",
-    href: "https://irenechey820712-star.github.io/ai-creative-mission/"
-  },
-  {
-    id: "bd-2023-2025",
-    category: "글",
-    title: "2023–2025 방글라데시 교원초청 정보화 연수",
-    summary: "3개년 정보화·디지털 세계화 연수 교재 개발 및 강의 참여",
-    date: "2025.07",
     href: "https://irenechey820712-star.github.io/ai-creative-mission/"
   }
 ];
