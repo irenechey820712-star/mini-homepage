@@ -18,7 +18,7 @@ import {
   type RemoteEntry,
   type VisitCounts
 } from "@/lib/firebase";
-import { translateMessage, type Translation } from "@/lib/translate";
+import { translateMessage, type TargetLang, type TranslationResult } from "@/lib/translate";
 import {
   boardPosts,
   episodes,
@@ -476,17 +476,21 @@ function GuestbookTab() {
   );
 }
 
-/* 방글라데시 코너: 영어·벵골어 메시지를 남기면 읽을 때 자동 번역합니다. */
+/* 방글라데시 코너: 메시지를 남기면 읽을 때 자동 번역합니다.
+   영어·벵골어 → 한국어, 한국어 → 영어 + 벵골어 */
+const TRANS_TAG: Record<TargetLang, string> = { ko: "🌐 한국어", en: "🌐 English", bn: "🌐 বাংলা" };
+
 function TranslatedMessage({ text }: { text: string }) {
-  const [tr, setTr] = useState<Translation | null>(null);
+  const [res, setRes] = useState<TranslationResult | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let alive = true;
     setLoading(true);
+    setRes(null);
     translateMessage(text).then(result => {
       if (!alive) return;
-      setTr(result);
+      setRes(result);
       setLoading(false);
     });
     return () => {
@@ -498,12 +502,14 @@ function TranslatedMessage({ text }: { text: string }) {
     <>
       <div className="cy-bd-original">{text}</div>
       {loading ? (
-        <div className="cy-bd-trans is-loading">번역 중… · translating…</div>
-      ) : tr ? (
-        <div className="cy-bd-trans">
-          <span className="cy-bd-trans-tag">{tr.target === "ko" ? "🌐 번역" : "🌐 EN"}</span> {tr.text}
-        </div>
-      ) : null}
+        <div className="cy-bd-trans is-loading">번역 중… · translating… · অনুবাদ হচ্ছে…</div>
+      ) : (
+        res?.items.map(item => (
+          <div className="cy-bd-trans" key={item.target}>
+            <span className="cy-bd-trans-tag">{TRANS_TAG[item.target]}</span> {item.text}
+          </div>
+        )) ?? null
+      )}
     </>
   );
 }

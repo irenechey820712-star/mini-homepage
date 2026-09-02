@@ -137,6 +137,14 @@ export type BoardPost = {
 
 export const boardPosts: BoardPost[] = [
   {
+    id: "canva-materials",
+    category: "글",
+    title: "수업·활동 자료 · Teaching & Activity Deck · শিক্ষা ও কার্যক্রম উপস্থাপনা",
+    summary: "Canva로 만든 소개 자료 · A Canva deck introducing my work · আমার কাজের ক্যানভা উপস্থাপনা",
+    date: "2026",
+    href: "https://canva.link/yuczzd3dcuhzf89"
+  },
+  {
     id: "english-challenge-s2",
     category: "앱",
     title: "아이린쌤 영어 챌린지 Season 2",

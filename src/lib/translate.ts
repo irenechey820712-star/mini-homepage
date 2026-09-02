@@ -1,13 +1,15 @@
 /* 방글라데시 코너용 즉석 번역입니다. API 키가 필요 없고 브라우저에서 바로 호출합니다.
    1순위 Google 무료 endpoint(translate_a), 실패하면 MyMemory 로 대체합니다.
    스크립트를 감지해 방향을 정합니다:
-   - 벵골어/영어 → 한국어
-   - 한국어 → 영어
-   결과는 메모리에 캐시합니다. 둘 다 실패하면 null(원문만 표시). */
+   - 벵골어  → 한국어
+   - 영어    → 한국어
+   - 한국어  → 영어 + 벵골어 (방글라데시 방문자도 읽을 수 있게)
+   결과는 메모리에 캐시합니다. 실패하면 그 언어는 건너뜁니다(원문은 항상 표시). */
 
 const cache = new Map<string, string>();
 
 export type SourceLang = "bn" | "ko" | "en";
+export type TargetLang = "ko" | "en" | "bn";
 
 export function detectLang(text: string): SourceLang {
   if (/[ঀ-৿]/.test(text)) return "bn";
@@ -15,9 +17,16 @@ export function detectLang(text: string): SourceLang {
   return "en";
 }
 
-export type Translation = { source: SourceLang; target: "ko" | "en"; text: string };
+const TARGETS: Record<SourceLang, TargetLang[]> = {
+  ko: ["en", "bn"],
+  en: ["ko"],
+  bn: ["ko"]
+};
 
-async function viaGoogle(text: string, target: "ko" | "en"): Promise<string | null> {
+export type Translated = { target: TargetLang; text: string };
+export type TranslationResult = { source: SourceLang; items: Translated[] };
+
+async function viaGoogle(text: string, target: TargetLang): Promise<string | null> {
   const url =
     "https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=" +
     target +
@@ -36,7 +45,7 @@ async function viaGoogle(text: string, target: "ko" | "en"): Promise<string | nu
   return out || null;
 }
 
-async function viaMyMemory(text: string, source: SourceLang, target: "ko" | "en"): Promise<string | null> {
+async function viaMyMemory(text: string, source: SourceLang, target: TargetLang): Promise<string | null> {
   const url =
     "https://api.mymemory.translated.net/get?q=" +
     encodeURIComponent(text) +
@@ -51,24 +60,33 @@ async function viaMyMemory(text: string, source: SourceLang, target: "ko" | "en"
   return typeof out === "string" && out.trim() ? out.trim() : null;
 }
 
-export async function translateMessage(text: string): Promise<Translation | null> {
-  const trimmed = text.trim();
-  if (!trimmed) return null;
-  const source = detectLang(trimmed);
-  const target: "ko" | "en" = source === "ko" ? "en" : "ko";
-  const key = `${source}|${target}:${trimmed}`;
-  if (cache.has(key)) return { source, target, text: cache.get(key)! };
-
-  for (const attempt of [() => viaGoogle(trimmed, target), () => viaMyMemory(trimmed, source, target)]) {
+async function translateOne(text: string, source: SourceLang, target: TargetLang): Promise<string | null> {
+  const key = `${source}|${target}:${text}`;
+  if (cache.has(key)) return cache.get(key)!;
+  for (const attempt of [() => viaGoogle(text, target), () => viaMyMemory(text, source, target)]) {
     try {
       const out = await attempt();
-      if (out && out.toLowerCase() !== trimmed.toLowerCase()) {
+      if (out && out.toLowerCase() !== text.toLowerCase()) {
         cache.set(key, out);
-        return { source, target, text: out };
+        return out;
       }
     } catch {
       /* 다음 방법 시도 */
     }
   }
   return null;
+}
+
+export async function translateMessage(text: string): Promise<TranslationResult | null> {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  const source = detectLang(trimmed);
+  const results = await Promise.all(
+    TARGETS[source].map(async target => {
+      const out = await translateOne(trimmed, source, target);
+      return out ? { target, text: out } : null;
+    })
+  );
+  const items = results.filter((r): r is Translated => r !== null);
+  return items.length ? { source, items } : null;
 }
