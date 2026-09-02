@@ -54,7 +54,13 @@ export const profileSections: ProfileSection[] = [
     id: "intro",
     title: "소개",
     blocks: [
-      { kind: "text", lines: ["영어교육 연구자, 데이터 실험랩 운영자, 작가 및 교사"] }
+      { kind: "text", lines: ["영어교육 연구자, 데이터 실험랩 운영자, 작가 및 교사"] },
+      {
+        kind: "contact",
+        items: [
+          { label: "블로그", value: "blog.naver.com/irenechey", href: "https://blog.naver.com/irenechey" }
+        ]
+      }
     ]
   },
   {
