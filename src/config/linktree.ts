@@ -59,6 +59,23 @@ export const profileSections: ProfileSection[] = [
         ]
       }
     ]
+  },
+  {
+    id: "portfolio",
+    title: "포트폴리오",
+    blocks: [
+      { kind: "text", lines: ["AIEDAP(AI 교육 융합 지원 플랫폼) 포트폴리오에 등재된 수업 사례입니다."] },
+      {
+        kind: "contact",
+        items: [
+          {
+            label: "AIEDAP",
+            value: "포트폴리오 보기 · aiedap.or.kr/portfolios/7617",
+            href: "https://www.aiedap.or.kr/portfolios/7617"
+          }
+        ]
+      }
+    ]
   }
 ];
 
@@ -165,7 +182,8 @@ export function secondsAt(timestamp: string): number {
 }
 
 export const bgmTracks: BgmTrack[] = [
-  { id: "pinball", title: "Pinball", artist: "리센느", videoId: "B8JJ8RNM-60" }
+  { id: "pinball", title: "Pinball", artist: "리센느", videoId: "B8JJ8RNM-60" },
+  { id: "newjeans-playlist", title: "뉴진스 플레이리스트", artist: "NewJeans", videoId: "f1WuPpDA5fo" }
 ];
 
 /* 홈 탭 아래쪽 한마디입니다. */
