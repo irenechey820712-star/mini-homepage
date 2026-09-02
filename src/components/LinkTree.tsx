@@ -206,16 +206,55 @@ function HeartCloudSvg() {
   );
 }
 
-const HEART_STYLES = ["cloud", "jelly", "brush"] as const;
+/* 사랑스럽고 bold한 스티커 하트 */
+function HeartPopSvg() {
+  return (
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="popFill" x1="0" y1="0" x2="0.28" y2="1">
+          <stop offset="0" stopColor="#C77BEC" />
+          <stop offset="0.5" stopColor="#8B5CF0" />
+          <stop offset="1" stopColor="#6636CC" />
+        </linearGradient>
+        <linearGradient id="popShine" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.9" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path d={HEART_PATH} transform="translate(7 10)" fill="#3F2680" opacity="0.35" />
+      <path d={HEART_PATH} fill="none" stroke="#3F2680" strokeWidth="17" strokeLinejoin="round" />
+      <path d={HEART_PATH} fill="none" stroke="#ffffff" strokeWidth="10" strokeLinejoin="round" />
+      <path d={HEART_PATH} fill="url(#popFill)" />
+      <path
+        d="M60 44C48 55 44 72 48 87C71 61 98 51 122 54C110 41 82 33 60 44Z"
+        fill="url(#popShine)"
+        opacity="0.7"
+      />
+      <ellipse cx="70" cy="52" rx="11" ry="6.5" fill="#ffffff" opacity="0.92" transform="rotate(-24 70 52)" />
+      <path d="M151 30l4.5 13 13 4.5-13 4.5-4.5 13-4.5-13-13-4.5 13-4.5z" fill="#FFDE85" />
+      <circle cx="42" cy="120" r="4.5" fill="#FFDE85" opacity="0.9" />
+    </svg>
+  );
+}
+
+const HEART_STYLES = ["pop", "jelly", "brush", "cloud"] as const;
 type HeartStyle = (typeof HEART_STYLES)[number];
 
 function HeartDeco() {
   const { text } = useSiteEditor();
-  const raw = text("heartStyle", "cloud");
-  const style: HeartStyle = (HEART_STYLES as readonly string[]).includes(raw) ? (raw as HeartStyle) : "cloud";
+  const raw = text("heartStyle", "pop");
+  const style: HeartStyle = (HEART_STYLES as readonly string[]).includes(raw) ? (raw as HeartStyle) : "pop";
   return (
     <span className={`cy-heart-brush cy-heart-${style}`} aria-hidden="true">
-      {style === "brush" ? <HeartBrushSvg /> : style === "jelly" ? <HeartJellySvg /> : <HeartCloudSvg />}
+      {style === "brush" ? (
+        <HeartBrushSvg />
+      ) : style === "jelly" ? (
+        <HeartJellySvg />
+      ) : style === "cloud" ? (
+        <HeartCloudSvg />
+      ) : (
+        <HeartPopSvg />
+      )}
     </span>
   );
 }

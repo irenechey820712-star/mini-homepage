@@ -171,6 +171,10 @@ body.lt-intro-open {
   filter: drop-shadow(0 16px 26px rgba(123, 95, 190, 0.2))
     drop-shadow(0 0 24px rgba(255, 255, 255, 0.35));
 }
+/* 사랑스럽고 bold한 스티커 하트 */
+.cy-heart-pop {
+  filter: drop-shadow(0 14px 22px rgba(63, 38, 128, 0.32));
+}
 @media (max-width: 960px) {
   .cy-heart-brush { display: none; }
 }
