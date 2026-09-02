@@ -494,6 +494,15 @@ body.lt-intro-open {
   color: #7E5FC0; /* 파스텔 보라 포인트 */
 }
 
+.cy-url-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.cy-url-icon {
+  font-size: 0.72rem;
+  line-height: 1;
+}
 .cy-url {
   font-family: "Tahoma", sans-serif;
   font-size: 0.7rem;
