@@ -237,7 +237,55 @@ function HeartPopSvg() {
   );
 }
 
-const HEART_STYLES = ["pop", "jelly", "brush", "cloud"] as const;
+/* 방글라데시 국기색(초록 바탕 + 빨간 원)을 글래스모피즘으로 담은 하트 */
+function HeartBdGlassSvg() {
+  return (
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <clipPath id="bdClip">
+          <path d={HEART_PATH} />
+        </clipPath>
+        <linearGradient id="bdGlassFill" x1="0" y1="0" x2="0.4" y2="1">
+          <stop offset="0" stopColor="#1FA37A" stopOpacity="0.42" />
+          <stop offset="1" stopColor="#00603F" stopOpacity="0.52" />
+        </linearGradient>
+        <linearGradient id="bdGlassShine" x1="0" y1="0" x2="0.55" y2="1">
+          <stop offset="0" stopColor="#ffffff" stopOpacity="0.55" />
+          <stop offset="0.45" stopColor="#ffffff" stopOpacity="0.08" />
+          <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
+        </linearGradient>
+        <filter id="bdBlur" x="-40%" y="-40%" width="180%" height="180%">
+          <feGaussianBlur stdDeviation="3.2" />
+        </filter>
+      </defs>
+
+      <path d={HEART_PATH} transform="translate(0 5)" fill="#0BA47B" opacity="0.25" filter="url(#bdBlur)" />
+
+      <g clipPath="url(#bdClip)">
+        <rect x="0" y="0" width="200" height="200" fill="url(#bdGlassFill)" />
+        <circle cx="90" cy="96" r="40" fill="#F42A41" opacity="0.5" />
+        <circle cx="90" cy="96" r="40" fill="#F42A41" opacity="0.28" filter="url(#bdBlur)" />
+        <rect x="0" y="0" width="200" height="200" fill="url(#bdGlassShine)" />
+        <path d="M-10 74 L118 -28 L152 -28 L22 74 Z" fill="#ffffff" opacity="0.18" />
+        <ellipse
+          cx="66"
+          cy="52"
+          rx="26"
+          ry="15"
+          fill="#ffffff"
+          opacity="0.32"
+          filter="url(#bdBlur)"
+          transform="rotate(-18 66 52)"
+        />
+      </g>
+
+      <path d={HEART_PATH} fill="none" stroke="#ffffff" strokeWidth="2" strokeOpacity="0.72" />
+      <path d={HEART_PATH} fill="none" stroke="#0B3D2E" strokeWidth="1" strokeOpacity="0.35" />
+    </svg>
+  );
+}
+
+const HEART_STYLES = ["pop", "bd", "jelly", "brush", "cloud"] as const;
 type HeartStyle = (typeof HEART_STYLES)[number];
 
 function HeartDeco() {
@@ -252,6 +300,8 @@ function HeartDeco() {
         <HeartJellySvg />
       ) : style === "cloud" ? (
         <HeartCloudSvg />
+      ) : style === "bd" ? (
+        <HeartBdGlassSvg />
       ) : (
         <HeartPopSvg />
       )}

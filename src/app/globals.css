@@ -175,6 +175,11 @@ body.lt-intro-open {
 .cy-heart-pop {
   filter: drop-shadow(0 14px 22px rgba(63, 38, 128, 0.32));
 }
+/* 방글라데시 글래스모피즘 하트 */
+.cy-heart-bd {
+  filter: drop-shadow(0 12px 24px rgba(0, 96, 63, 0.3))
+    drop-shadow(0 0 16px rgba(255, 255, 255, 0.4));
+}
 @media (max-width: 960px) {
   .cy-heart-brush { display: none; }
 }
