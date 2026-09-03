@@ -185,6 +185,22 @@ export const boardPosts: BoardPost[] = [
     summary: "단순 프롬프트를 넘어 평가·피드백·복구가 내장된 AI 시스템을 설계하는 교사 훈련 앱 · A training app for teachers to build reliable AI systems with built-in evaluation, feedback, and recovery beyond single prompts · একক প্রম্পটের বাইরে গিয়ে মূল্যায়ন, ফিডব্যাক ও পুনরুদ্ধারসহ নির্ভরযোগ্য AI সিস্টেম তৈরিতে শিক্ষকদের প্রশিক্ষণ অ্যাপ",
     date: "2026",
     href: "https://irenechey820712-star.github.io/english-teacher-harness-lab/"
+  },
+  {
+    id: "english-terminology-deck",
+    category: "앱",
+    title: "AI×영어교육 전문용어 덱 · AI × English Education Terminology Deck · AI × ইংরেজি শিক্ষা পরিভাষা ডেক",
+    summary: "AI와 영어교육 전문용어를 카드로 익히는 플래시카드 덱 · A flashcard deck for learning AI and English-education terminology · AI ও ইংরেজি শিক্ষার পরিভাষা শেখার ফ্ল্যাশকার্ড ডেক",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/english-terminology-deck/"
+  },
+  {
+    id: "efl-reading-graph",
+    category: "앱",
+    title: "EFL 리딩 그래프 · EFL Reading Graph · EFL রিডিং গ্রাফ",
+    summary: "영어 지문에서 문제를 만들고 근거를 찾아 답을 검증하는 읽기 학습 도구 · A reading tool that generates questions from English passages, finds textual evidence, and verifies answers · ইংরেজি অনুচ্ছেদ থেকে প্রশ্ন তৈরি করে, পাঠ্যপ্রমাণ খুঁজে উত্তর যাচাই করার রিডিং টুল",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/efl-reading-graph/"
   }
 ];
 
