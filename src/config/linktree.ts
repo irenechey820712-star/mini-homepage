@@ -177,6 +177,14 @@ export const boardPosts: BoardPost[] = [
     summary: "캐릭터 → 포스터 → 스토리보드 → 30초 영상 제작 플랫폼 · Character → poster → storyboard → 30-second video platform · চরিত্র → পোস্টার → স্টোরিবোর্ড → ৩০ সেকেন্ডের ভিডিও প্ল্যাটফর্ম",
     date: "2026.08",
     href: "https://irenechey820712-star.github.io/ai-creative-mission/"
+  },
+  {
+    id: "english-teacher-harness-lab",
+    category: "앱",
+    title: "영어교사 하네스 엔지니어링 랩 · English Teacher Harness Engineering Lab · ইংরেজি শিক্ষকদের হারনেস ইঞ্জিনিয়ারিং ল্যাব",
+    summary: "단순 프롬프트를 넘어 평가·피드백·복구가 내장된 AI 시스템을 설계하는 교사 훈련 앱 · A training app for teachers to build reliable AI systems with built-in evaluation, feedback, and recovery beyond single prompts · একক প্রম্পটের বাইরে গিয়ে মূল্যায়ন, ফিডব্যাক ও পুনরুদ্ধারসহ নির্ভরযোগ্য AI সিস্টেম তৈরিতে শিক্ষকদের প্রশিক্ষণ অ্যাপ",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/english-teacher-harness-lab/"
   }
 ];
 
