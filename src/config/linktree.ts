@@ -179,6 +179,14 @@ export const boardPosts: BoardPost[] = [
     href: "https://irenechey820712-star.github.io/ai-creative-mission/"
   },
   {
+    id: "aiedap-simhwa-5chasi",
+    category: "앱",
+    title: "AIEDAP 영어교과 심화연수 5차시 · AIEDAP English Advanced Teacher Training (5 sessions) · AIEDAP ইংরেজি বিষয়ভিত্তিক উন্নত শিক্ষক প্রশিক্ষণ (৫ সেশন)",
+    summary: "AI 교과융합 수업 모형 설계 5차시 자료 모음: 강의 슬라이드(프레지형·평면형)와 실습 웹앱 · A five-session bundle for redesigning existing lesson models around AI: lecture decks (Prezi-style and flat) plus hands-on web apps · বিদ্যমান পাঠ মডেলকে AI ঘিরে নতুন করে সাজানোর পাঁচ সেশনের প্যাকেজ: লেকচার ডেক (প্রেজি-ধাঁচ ও সাধারণ) এবং হাতে-কলমে ওয়েব অ্যাপ",
+    date: "2026.09",
+    href: "https://irenechey820712-star.github.io/aiedap-simhwa-5chasi/"
+  },
+  {
     id: "english-teacher-harness-lab",
     category: "앱",
     title: "영어교사 하네스 엔지니어링 랩 · English Teacher Harness Engineering Lab · ইংরেজি শিক্ষকদের হারনেস ইঞ্জিনিয়ারিং ল্যাব",
