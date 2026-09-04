@@ -1384,6 +1384,16 @@ body.lt-intro-open {
   border-radius: 2px;
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
+.cy-aiedap-logo {
+  display: inline-block;
+  width: 1.6em;
+  height: 1.6em;
+  vertical-align: -0.35em;
+  margin-right: 4px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+  object-fit: cover;
+}
 .cy-tab-flag {
   display: block;
   width: 20px;

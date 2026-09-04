@@ -940,7 +940,11 @@ function BangladeshForm() {
 function AiedapTab() {
   return (
     <div className="cy-content-box">
-      <SectionTitle title="AIEDAP 심화연수" sub="AIEDAP Advanced Teacher Training · AIEDAP উন্নত শিক্ষক প্রশিক্ষণ" />
+      <div className="cy-section-title">
+        <img className="cy-aiedap-logo" src={asset("/assets/aiedap-logo.png")} alt="AIEDAP 로고" />
+        AIEDAP 심화연수
+        <span className="cy-sub-text">AIEDAP Advanced Teacher Training · AIEDAP উন্নত শিক্ষক প্রশিক্ষণ</span>
+      </div>
       <div className="cy-bd-intro">
         {aiedapIntro.map(row => (
           <p key={row.lang}><span className="cy-bd-lang">{row.lang}</span> {row.text}</p>
