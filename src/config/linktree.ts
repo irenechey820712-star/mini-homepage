@@ -208,15 +208,15 @@ export const boardPosts: BoardPost[] = [
 export const aiedapIntro: { lang: string; text: string }[] = [
   {
     lang: "한국어",
-    text: "AIEDAP 마스터교원 전문성 강화 연수(영어교과 심화)에서 만든 자료입니다. 기존 수업 모형을 분석해 AI 개입 지점을 재설계하는 5차시 강의 슬라이드와 실습 웹앱을 모았습니다."
+    text: "AIEDAP 마스터교원 전문성 강화 연수(영어교과 심화) 강의를 위해 만든 자료입니다. 기존 수업 모형을 분석해 AI 개입 지점을 재설계하는 5차시 강의 슬라이드와 실습 웹앱을 모았습니다."
   },
   {
     lang: "English",
-    text: "Materials from the AIEDAP master-teacher advanced training (English subject track): a five-session set of lecture decks and hands-on web apps for redesigning existing lesson models around AI."
+    text: "Materials made for the AIEDAP master-teacher advanced training (English subject track): a five-session set of lecture decks and hands-on web apps for redesigning existing lesson models around AI."
   },
   {
     lang: "বাংলা",
-    text: "AIEDAP মাস্টার-শিক্ষক উন্নত প্রশিক্ষণের (ইংরেজি বিষয়) উপকরণ। বিদ্যমান পাঠ মডেলকে AI ঘিরে নতুন করে সাজানোর জন্য পাঁচ সেশনের লেকচার ডেক ও হাতে-কলমে ওয়েব অ্যাপের সংকলন।"
+    text: "AIEDAP মাস্টার-শিক্ষক উন্নত প্রশিক্ষণের (ইংরেজি বিষয়) ক্লাসের জন্য তৈরি উপকরণ। বিদ্যমান পাঠ মডেলকে AI ঘিরে নতুন করে সাজানোর জন্য পাঁচ সেশনের লেকচার ডেক ও হাতে-কলমে ওয়েব অ্যাপের সংকলন।"
   }
 ];
 
