@@ -1394,6 +1394,15 @@ body.lt-intro-open {
   box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
   object-fit: cover;
 }
+.cy-tab-logo {
+  display: block;
+  width: 18px;
+  height: 18px;
+  margin: 0 auto 3px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
 .cy-tab-flag {
   display: block;
   width: 20px;

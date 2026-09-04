@@ -1225,6 +1225,7 @@ function LinkTreeInner() {
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab === "bangladesh" ? <BdFlag className="cy-tab-flag" /> : null}
+                  {tab === "aiedap" ? <img className="cy-tab-logo" src={asset("/assets/aiedap-logo.png")} alt="" /> : null}
                   <span className="cy-tab-line">{NAV_LABELS[tab]}</span>
                 </button>
               ))}
