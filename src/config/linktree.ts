@@ -179,14 +179,6 @@ export const boardPosts: BoardPost[] = [
     href: "https://irenechey820712-star.github.io/ai-creative-mission/"
   },
   {
-    id: "aiedap-simhwa-5chasi",
-    category: "앱",
-    title: "AIEDAP 영어교과 심화연수 5차시 · AIEDAP English Advanced Teacher Training (5 sessions) · AIEDAP ইংরেজি বিষয়ভিত্তিক উন্নত শিক্ষক প্রশিক্ষণ (৫ সেশন)",
-    summary: "AI 교과융합 수업 모형 설계 5차시 자료 모음: 강의 슬라이드(프레지형·평면형)와 실습 웹앱 · A five-session bundle for redesigning existing lesson models around AI: lecture decks (Prezi-style and flat) plus hands-on web apps · বিদ্যমান পাঠ মডেলকে AI ঘিরে নতুন করে সাজানোর পাঁচ সেশনের প্যাকেজ: লেকচার ডেক (প্রেজি-ধাঁচ ও সাধারণ) এবং হাতে-কলমে ওয়েব অ্যাপ",
-    date: "2026.09",
-    href: "https://irenechey820712-star.github.io/aiedap-simhwa-5chasi/"
-  },
-  {
     id: "english-teacher-harness-lab",
     category: "앱",
     title: "영어교사 하네스 엔지니어링 랩 · English Teacher Harness Engineering Lab · ইংরেজি শিক্ষকদের হারনেস ইঞ্জিনিয়ারিং ল্যাব",
@@ -204,6 +196,57 @@ export const boardPosts: BoardPost[] = [
   },
   {
     id: "efl-reading-graph",
+    category: "앱",
+    title: "EFL 리딩 그래프 · EFL Reading Graph · EFL রিডিং গ্রাফ",
+    summary: "영어 지문에서 문제를 만들고 근거를 찾아 답을 검증하는 읽기 학습 도구 · A reading tool that generates questions from English passages, finds textual evidence, and verifies answers · ইংরেজি অনুচ্ছেদ থেকে প্রশ্ন তৈরি করে, পাঠ্যপ্রমাণ খুঁজে উত্তর যাচাই করার রিডিং টুল",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/efl-reading-graph/"
+  }
+];
+
+/* AIEDAP 탭입니다. 소개 문구(3개국어)와 자료 목록입니다. */
+export const aiedapIntro: { lang: string; text: string }[] = [
+  {
+    lang: "한국어",
+    text: "AIEDAP 마스터교원 전문성 강화 연수(영어교과 심화)에서 만든 자료입니다. 기존 수업 모형을 분석해 AI 개입 지점을 재설계하는 5차시 강의 슬라이드와 실습 웹앱을 모았습니다."
+  },
+  {
+    lang: "English",
+    text: "Materials from the AIEDAP master-teacher advanced training (English subject track): a five-session set of lecture decks and hands-on web apps for redesigning existing lesson models around AI."
+  },
+  {
+    lang: "বাংলা",
+    text: "AIEDAP মাস্টার-শিক্ষক উন্নত প্রশিক্ষণের (ইংরেজি বিষয়) উপকরণ। বিদ্যমান পাঠ মডেলকে AI ঘিরে নতুন করে সাজানোর জন্য পাঁচ সেশনের লেকচার ডেক ও হাতে-কলমে ওয়েব অ্যাপের সংকলন।"
+  }
+];
+
+export const aiedapItems: BoardPost[] = [
+  {
+    id: "aiedap-simhwa-5chasi",
+    category: "앱",
+    title: "AIEDAP 영어교과 심화연수 5차시 (전체 모음) · AIEDAP English Advanced Training, all 5 sessions · AIEDAP ইংরেজি বিষয়ভিত্তিক উন্নত প্রশিক্ষণ (সম্পূর্ণ ৫ সেশন)",
+    summary: "강의 슬라이드(프레지형·평면형) + 실습 웹앱 모음 랜딩 페이지 · Landing page for the lecture decks (Prezi-style and flat) plus hands-on web apps · লেকচার ডেক (প্রেজি-ধাঁচ ও সাধারণ) এবং হাতে-কলমে ওয়েব অ্যাপের ল্যান্ডিং পেজ",
+    date: "2026.09",
+    href: "https://irenechey820712-star.github.io/aiedap-simhwa-5chasi/"
+  },
+  {
+    id: "aiedap-harness-lab",
+    category: "앱",
+    title: "영어교사 하네스 엔지니어링 랩 · English Teacher Harness Engineering Lab · ইংরেজি শিক্ষকদের হারনেস ইঞ্জিনিয়ারিং ল্যাব",
+    summary: "단순 프롬프트를 넘어 평가·피드백·복구가 내장된 AI 시스템을 설계하는 교사 훈련 앱 · A training app for teachers to build reliable AI systems with built-in evaluation, feedback, and recovery beyond single prompts · একক প্রম্পটের বাইরে গিয়ে মূল্যায়ন, ফিডব্যাক ও পুনরুদ্ধারসহ নির্ভরযোগ্য AI সিস্টেম তৈরিতে শিক্ষকদের প্রশিক্ষণ অ্যাপ",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/english-teacher-harness-lab/"
+  },
+  {
+    id: "aiedap-terminology-deck",
+    category: "앱",
+    title: "AI×영어교육 전문용어 덱 · AI × English Education Terminology Deck · AI × ইংরেজি শিক্ষা পরিভাষা ডেক",
+    summary: "AI와 영어교육 전문용어를 카드로 익히는 플래시카드 덱 · A flashcard deck for learning AI and English-education terminology · AI ও ইংরেজি শিক্ষার পরিভাষা শেখার ফ্ল্যাশকার্ড ডেক",
+    date: "2026",
+    href: "https://irenechey820712-star.github.io/english-terminology-deck/"
+  },
+  {
+    id: "aiedap-efl-reading-graph",
     category: "앱",
     title: "EFL 리딩 그래프 · EFL Reading Graph · EFL রিডিং গ্রাফ",
     summary: "영어 지문에서 문제를 만들고 근거를 찾아 답을 검증하는 읽기 학습 도구 · A reading tool that generates questions from English passages, finds textual evidence, and verifies answers · ইংরেজি অনুচ্ছেদ থেকে প্রশ্ন তৈরি করে, পাঠ্যপ্রমাণ খুঁজে উত্তর যাচাই করার রিডিং টুল",

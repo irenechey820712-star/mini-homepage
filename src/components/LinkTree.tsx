@@ -22,6 +22,8 @@ import {
 } from "@/lib/firebase";
 import { translateMessage, translateTo, type TargetLang, type TranslationResult } from "@/lib/translate";
 import {
+  aiedapIntro,
+  aiedapItems,
   boardPosts,
   episodes,
   guestbook,
@@ -33,7 +35,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "story", "board", "photo", "guestbook", "bangladesh"] as const;
+const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "bangladesh"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -43,6 +45,7 @@ const TABS: TabName[] = ALL_TABS.filter(tab => tab !== "story" || episodes.lengt
 const NAV_LABELS: Record<TabName, string> = {
   home: "홈",
   profile: "프로필",
+  aiedap: "AIEDAP",
   story: profile.storyLabel,
   board: profile.boardLabel,
   photo: profile.photoLabel,
@@ -303,6 +306,7 @@ function IntroOverlay({ onBrowse }: { onBrowse: () => void }) {
 const TAB_TITLES: Record<TabName, string> = {
   home: profile.catalogTitle,
   profile: "프로필",
+  aiedap: "AIEDAP 심화연수",
   story: profile.storyLabel,
   board: profile.boardLabel,
   photo: profile.photoLabel,
@@ -933,6 +937,44 @@ function BangladeshForm() {
   );
 }
 
+function AiedapTab() {
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title="AIEDAP 심화연수" sub="AIEDAP Advanced Teacher Training · AIEDAP উন্নত শিক্ষক প্রশিক্ষণ" />
+      <div className="cy-bd-intro">
+        {aiedapIntro.map(row => (
+          <p key={row.lang}><span className="cy-bd-lang">{row.lang}</span> {row.text}</p>
+        ))}
+      </div>
+      {aiedapItems.length === 0 ? (
+        <div className="cy-empty-box">아직 올린 자료가 없습니다.</div>
+      ) : (
+        <ul className="cy-board-list">
+          {aiedapItems.map(post => (
+            <li key={post.id} className="cy-board-item">
+              <a className="cy-board-link" href={post.href} target="_blank" rel="noopener noreferrer">
+                {post.preview ? (
+                  <span className="cy-board-preview">
+                    <img src={asset(post.preview.src)} alt={post.preview.alt} loading="lazy" />
+                  </span>
+                ) : null}
+                <span className="cy-board-text">
+                  <span className="cy-board-head">
+                    <span className="cy-board-category">{post.category}</span>
+                    <span className="cy-board-title">{post.title}</span>
+                  </span>
+                  {post.summary ? <span className="cy-board-summary">{post.summary}</span> : null}
+                  <span className="cy-board-date">{post.date}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 function BangladeshTab() {
   const [remote, setRemote] = useState<RemoteEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -1161,6 +1203,7 @@ function LinkTreeInner() {
               <div className="cy-right-content">
                 {activeTab === "home" && <HomeTab />}
                 {activeTab === "profile" && <ProfileTab />}
+                {activeTab === "aiedap" && <AiedapTab />}
                 {activeTab === "story" && <StoryTab />}
                 {activeTab === "board" && <BoardTab />}
                 {activeTab === "photo" && <PhotoTab />}
