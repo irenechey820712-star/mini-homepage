@@ -1221,7 +1221,7 @@ function LinkTreeInner() {
               {TABS.map(tab => (
                 <button
                   key={tab}
-                  className={"cy-tab-btn " + (activeTab === tab ? "active" : "")}
+                  className={"cy-tab-btn " + (tab === "aiedap" ? "cy-tab-aiedap " : "") + (activeTab === tab ? "active" : "")}
                   onClick={() => setActiveTab(tab)}
                 >
                   {tab === "bangladesh" ? <BdFlag className="cy-tab-flag" /> : null}

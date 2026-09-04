@@ -1185,6 +1185,21 @@ body.lt-intro-open {
   z-index: 10;
 }
 
+/* AIEDAP 탭 — 공식 브랜드 컬러(남색 · 주황 포인트) */
+.cy-tab-btn.cy-tab-aiedap {
+  background: #003C82;
+  border-color: #002a5c;
+}
+.cy-tab-btn.cy-tab-aiedap:hover {
+  background: #0b4e96;
+}
+.cy-tab-btn.cy-tab-aiedap.active {
+  background: white;
+  color: #003C82;
+  border-color: #003C82;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.1), inset 0 -3px 0 #F29600;
+}
+
 /* ------------------------------------- */
 /* 반응형                                 */
 /* ------------------------------------- */
