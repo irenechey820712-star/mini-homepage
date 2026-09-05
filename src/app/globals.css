@@ -1506,6 +1506,33 @@ body.lt-intro-open {
   padding: 6px 16px;
 }
 
+/* AIEDAP 실습 결과물 게시판 */
+.cy-pb-block {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px dashed #ddd;
+}
+.cy-pb-step {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #7E5FC0;
+  background: #f3effa;
+  border-radius: 99px;
+  padding: 1px 8px;
+}
+.cy-pb-link {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #7E5FC0;
+  text-decoration: none;
+}
+.cy-pb-link:hover {
+  text-decoration: underline;
+}
+
 /* 소유자 모더레이션(편집 모드에서 각 글 수정·삭제) */
 .cy-mod-row {
   display: flex;

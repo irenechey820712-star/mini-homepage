@@ -7,8 +7,10 @@ import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
 import {
   BANGLADESH_LIMITS,
   GUESTBOOK_LIMITS,
+  PRACTICE_LIMITS,
   addBangladeshEntry,
   addGuestbookEntry,
+  addPracticeEntry,
   deleteEntry,
   isCounterEnabled,
   isFirebaseConfigured,
@@ -16,7 +18,9 @@ import {
   recordVisit,
   subscribeBangladesh,
   subscribeGuestbook,
+  subscribePracticeBoard,
   updateEntryText,
+  type PracticeEntry,
   type RemoteEntry,
   type VisitCounts
 } from "@/lib/firebase";
@@ -650,7 +654,7 @@ function BoardTab() {
 }
 
 /* 편집 모드에서 소유자에게만 보이는 글 수정·삭제 컨트롤입니다. */
-function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh"; id: string; text: string }) {
+function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh" | "practiceBoard"; id: string; text: string }) {
   const { editing, owner } = useSiteEditor();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(text);
@@ -937,6 +941,130 @@ function BangladeshForm() {
   );
 }
 
+function PracticeBoardForm() {
+  const [author, setAuthor] = useState("");
+  const [step, setStep] = useState("");
+  const [text, setText] = useState("");
+  const [link, setLink] = useState("");
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (sending) return;
+    setSending(true);
+    setMessage(null);
+    try {
+      await addPracticeEntry(author, step, text, link);
+      setAuthor("");
+      setStep("");
+      setText("");
+      setLink("");
+      setMessage({ kind: "ok", text: "실습 결과물을 올렸어요. 고맙습니다!" });
+    } catch (error) {
+      setMessage({ kind: "error", text: error instanceof Error ? error.message : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요." });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <form className="cy-bd-form" onSubmit={submit}>
+      <div className="cy-gb-row">
+        <input
+          className="cy-gb-author"
+          value={author}
+          onChange={e => setAuthor(e.target.value)}
+          placeholder="이름"
+          maxLength={PRACTICE_LIMITS.author}
+          aria-label="이름"
+        />
+        <input
+          className="cy-gb-text"
+          value={step}
+          onChange={e => setStep(e.target.value)}
+          placeholder="실습 단계 (예: STEP 2 · EFL 리딩 그래프)"
+          maxLength={PRACTICE_LIMITS.step}
+          aria-label="실습 단계"
+        />
+      </div>
+      <textarea
+        className="cy-bd-textarea"
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="산출물·소감을 적어 주세요 (예: RETRY 화살표가 켜진 화면을 확인했습니다)"
+        maxLength={PRACTICE_LIMITS.text}
+        rows={3}
+        aria-label="산출물·소감"
+      />
+      <input
+        className="cy-gb-text"
+        value={link}
+        onChange={e => setLink(e.target.value)}
+        placeholder="결과물 링크 (선택 — 스크린샷·문서 등의 URL)"
+        maxLength={PRACTICE_LIMITS.link}
+        aria-label="결과물 링크"
+      />
+      <button className="cy-gb-submit" type="submit" disabled={sending}>
+        {sending ? "올리는 중" : "올리기"}
+      </button>
+      {message ? (
+        <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
+      ) : null}
+    </form>
+  );
+}
+
+function PracticeBoard() {
+  const [remote, setRemote] = useState<PracticeEntry[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!isFirebaseConfigured) return;
+    return subscribePracticeBoard(50, setRemote, () => setFailed(true));
+  }, []);
+
+  const live = isFirebaseConfigured && !failed;
+
+  return (
+    <div className="cy-pb-block">
+      <div className="cy-section-title">
+        실습 결과물 게시판
+        <span className="cy-sub-text">Practice Results Board — 실습하며 나온 결과물·소감을 올려 주세요</span>
+      </div>
+
+      {!live ? (
+        <div className="cy-empty-box">게시판은 준비 중입니다.</div>
+      ) : remote === null ? (
+        <div className="cy-gb-loading">불러오는 중…</div>
+      ) : remote.length === 0 ? (
+        <div className="cy-gb-loading">첫 실습 결과물을 올려 주세요!</div>
+      ) : (
+        <div className="cy-bd-list">
+          {remote.map(entry => (
+            <div key={entry.id} className="cy-bd-item">
+              <div className="cy-bd-head">
+                <b><span className="cy-name-heart" aria-hidden="true">📝</span> {entry.author}</b>{" "}
+                <span className="cy-pb-step">{entry.step}</span>{" "}
+                <span className="cg-date">({entry.date})</span>
+              </div>
+              <div className="cy-bd-original">{entry.text}</div>
+              {entry.link ? (
+                <a className="cy-pb-link" href={entry.link} target="_blank" rel="noopener noreferrer">
+                  결과물 보기 ↗
+                </a>
+              ) : null}
+              <OwnerControls coll="practiceBoard" id={entry.id} text={entry.text} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {live ? <PracticeBoardForm /> : null}
+    </div>
+  );
+}
+
 function AiedapTab() {
   return (
     <div className="cy-content-box">
@@ -975,6 +1103,7 @@ function AiedapTab() {
           ))}
         </ul>
       )}
+      <PracticeBoard />
     </div>
   );
 }

@@ -67,6 +67,31 @@ service cloud.firestore {
       allow update, delete: if isOwner();
     }
 
+    /* AIEDAP 실습 결과물 게시판입니다. 연수생이 누구나 자신의 실습 결과(단계·소감·결과물 링크)를 남길 수 있습니다.
+       - 필드는 author, step, text, link, createdAt 다섯 개만 허용 (link 는 선택 — 없어도 됨)
+       - 이름 40자, 실습 단계 60자, 소감/결과 500자, 링크 300자 제한
+       - createdAt 은 서버 시간만 허용, 수정·삭제는 소유자만 */
+    match /practiceBoard/{entryId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['author', 'step', 'text', 'link', 'createdAt'])
+        && request.resource.data.author is string
+        && request.resource.data.author.size() >= 1
+        && request.resource.data.author.size() <= 40
+        && request.resource.data.step is string
+        && request.resource.data.step.size() >= 1
+        && request.resource.data.step.size() <= 60
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 1
+        && request.resource.data.text.size() <= 500
+        && (!('link' in request.resource.data)
+          || (request.resource.data.link is string && request.resource.data.link.size() <= 300))
+        && request.resource.data.createdAt == request.time;
+
+      /* 소유자는 수정·삭제(모더레이션) 가능 */
+      allow update, delete: if isOwner();
+    }
+
     /* 미니홈피 왼쪽 위 TODAY / TOTAL 방문 수입니다. 문서 하나만 씁니다.
 
        - 한 번에 total 을 1씩만 올릴 수 있습니다

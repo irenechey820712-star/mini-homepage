@@ -225,7 +225,7 @@ export async function addGuestbookEntry(author: string, text: string) {
 }
 
 /* 소유자 전용 — 한줄평 수정·삭제 (firestore.rules 에서 isOwner 로 잠금) */
-export async function updateEntryText(coll: "guestbook" | "bangladesh", id: string, text: string) {
+export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practiceBoard", id: string, text: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   const trimmed = text.trim();
@@ -233,7 +233,7 @@ export async function updateEntryText(coll: "guestbook" | "bangladesh", id: stri
   await updateDoc(doc(store, coll, id), { text: trimmed });
 }
 
-export async function deleteEntry(coll: "guestbook" | "bangladesh", id: string) {
+export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard", id: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   await deleteDoc(doc(store, coll, id));
@@ -288,4 +288,67 @@ export async function addBangladeshEntry(author: string, text: string) {
     text: trimmedText,
     createdAt: serverTimestamp()
   });
+}
+
+/* ---------------------------------------------------------------
+   AIEDAP 실습 결과물 게시판 (연수생이 직접 올리는 실시간 게시판)
+   --------------------------------------------------------------- */
+export const PRACTICE_LIMITS = { author: 40, step: 60, text: 500, link: 300 } as const;
+
+export type PracticeEntry = RemoteEntry & { step: string; link: string };
+
+export function subscribePracticeBoard(
+  count: number,
+  onData: (entries: PracticeEntry[]) => void,
+  onError: (error: Error) => void
+) {
+  const store = getDb();
+  if (!store) return () => {};
+
+  const q = query(collection(store, "practiceBoard"), orderBy("createdAt", "desc"), fsLimit(count));
+  return onSnapshot(
+    q,
+    snapshot => {
+      onData(
+        snapshot.docs.map(entry => {
+          const data = entry.data();
+          return {
+            id: entry.id,
+            author: String(data.author ?? ""),
+            step: String(data.step ?? ""),
+            text: String(data.text ?? ""),
+            link: String(data.link ?? ""),
+            date: formatDate(data.createdAt)
+          };
+        })
+      );
+    },
+    error => onError(error as Error)
+  );
+}
+
+export async function addPracticeEntry(author: string, step: string, text: string, link: string) {
+  const store = getDb();
+  if (!store) throw new Error("실습 결과물 게시판이 설정되지 않았습니다.");
+
+  const trimmedAuthor = author.trim();
+  const trimmedStep = step.trim();
+  const trimmedText = text.trim();
+  const trimmedLink = link.trim();
+
+  if (!trimmedAuthor || !trimmedStep || !trimmedText) throw new Error("이름·실습 단계·소감을 모두 적어 주세요.");
+  if (trimmedAuthor.length > PRACTICE_LIMITS.author) throw new Error(`이름은 ${PRACTICE_LIMITS.author}자까지 쓸 수 있어요.`);
+  if (trimmedStep.length > PRACTICE_LIMITS.step) throw new Error(`실습 단계는 ${PRACTICE_LIMITS.step}자까지 쓸 수 있어요.`);
+  if (trimmedText.length > PRACTICE_LIMITS.text) throw new Error(`소감/결과는 ${PRACTICE_LIMITS.text}자까지 쓸 수 있어요.`);
+  if (trimmedLink.length > PRACTICE_LIMITS.link) throw new Error(`링크는 ${PRACTICE_LIMITS.link}자까지 쓸 수 있어요.`);
+
+  const payload: Record<string, unknown> = {
+    author: trimmedAuthor,
+    step: trimmedStep,
+    text: trimmedText,
+    createdAt: serverTimestamp()
+  };
+  if (trimmedLink) payload.link = trimmedLink;
+
+  await addDoc(collection(store, "practiceBoard"), payload);
 }
