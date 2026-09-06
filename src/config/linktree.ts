@@ -280,7 +280,8 @@ export const waveLinks: WaveLink[] = [
   { id: "meyo-lab", label: "미요Lab 미니홈피", href: "https://pcallpang.github.io/meyo-lab/" },
   { id: "n-lifescience", label: "n-lifescience 미니홈피", href: "https://n-lifescience.github.io/mini-homepage/" },
   { id: "ygywam", label: "ygywam 미니홈피", href: "https://ygywam.github.io/mini-homepage/" },
-  { id: "sungandi", label: "sungandi 미니홈피", href: "https://sungandi86-max.github.io/sungandi-mini-homepage/" }
+  { id: "sungandi", label: "sungandi 미니홈피", href: "https://sungandi86-max.github.io/sungandi-mini-homepage/" },
+  { id: "ethics-lab", label: "ethics-lab 미니홈피", href: "https://moonflow410.github.io/ethics-lab/" }
 ];
 
 /* 미니홈피 BGM 입니다. 유튜브 영상을 음원으로 씁니다.
