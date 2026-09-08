@@ -1067,6 +1067,16 @@ function PracticeBoard({
         <span className="cy-sub-text">{subtitle}</span>
       </div>
 
+      <div className="cy-pb-note">
+        <p>올린 글은 관리자만 삭제할 수 있어요. 지우고 싶은 글이 있으면 요청해 주시면 지워 드립니다.</p>
+        {!showStep ? (
+          <>
+            <p>Only the admin can delete posts. If you want a post removed, just let us know and we will delete it.</p>
+            <p>শুধু অ্যাডমিন পোস্ট মুছতে পারেন। কোনো পোস্ট সরাতে চাইলে জানান, আমরা মুছে দেব।</p>
+          </>
+        ) : null}
+      </div>
+
       {!isFirebaseConfigured ? (
         <div className="cy-empty-box">게시판은 준비 중입니다.</div>
       ) : failed ? (

@@ -1631,6 +1631,22 @@ body.lt-intro-open {
   padding-top: 14px;
   border-top: 1px dashed #ddd;
 }
+.cy-pb-note {
+  margin: 6px 0 10px;
+  padding: 8px 10px;
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: #6a5f86;
+  background: #f5f1fb;
+  border: 1px solid #e3d4f7;
+  border-radius: 6px;
+}
+.cy-pb-note p {
+  margin: 0 0 4px;
+}
+.cy-pb-note p:last-child {
+  margin-bottom: 0;
+}
 .cy-pb-step {
   display: inline-block;
   font-size: 0.72rem;
