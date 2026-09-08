@@ -7,27 +7,34 @@ import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
 import {
   BANGLADESH_LIMITS,
   GUESTBOOK_LIMITS,
+  PHOTO_LIMITS,
   PRACTICE_LIMITS,
   addBangladeshEntry,
   addGuestbookEntry,
+  addPhotoEntry,
   addPracticeEntry,
   deleteEntry,
   isCounterEnabled,
   isFirebaseConfigured,
   isGuestbookEnabled,
+  isPhotoUploadEnabled,
   recordVisit,
   subscribeBangladesh,
   subscribeGuestbook,
+  subscribePhotos,
   subscribePracticeBoard,
   updateEntryText,
   type PracticeEntry,
   type RemoteEntry,
+  type RemotePhoto,
   type VisitCounts
 } from "@/lib/firebase";
+import { fileToResizedDataUrl } from "@/lib/image";
 import { translateMessage, translateTo, type TargetLang, type TranslationResult } from "@/lib/translate";
 import {
   aiedapIntro,
   aiedapItems,
+  bangladeshTrainingLinks,
   boardPosts,
   episodes,
   guestbook,
@@ -39,7 +46,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "bangladesh"] as const;
+const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "bangladesh", "bdtraining"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -54,7 +61,8 @@ const NAV_LABELS: Record<TabName, string> = {
   board: profile.boardLabel,
   photo: profile.photoLabel,
   guestbook: "방명록",
-  bangladesh: "방글라"
+  bangladesh: "방글라",
+  bdtraining: "연수"
 };
 
 /* 진입 화면 셰이더 배경 설정입니다. 색은 theme.ts 를 따릅니다. */
@@ -315,7 +323,8 @@ const TAB_TITLES: Record<TabName, string> = {
   board: profile.boardLabel,
   photo: profile.photoLabel,
   guestbook: "방명록",
-  bangladesh: "방글라데시 코너"
+  bangladesh: "방글라데시 코너",
+  bdtraining: "방글라데시 연수"
 };
 
 function SectionTitle({ title, sub }: { title: string; sub?: string }) {
@@ -1157,6 +1166,37 @@ function BangladeshTab() {
   );
 }
 
+/* 방글라데시 연수 탭: 연수와 관련된 링크를 모아 보여줍니다. (linktree.ts 의 bangladeshTrainingLinks) */
+function BangladeshTrainingTab() {
+  return (
+    <div className="cy-content-box">
+      <div className="cy-section-title">
+        <BdFlag /> 방글라데시 연수
+        <span className="cy-sub-text">Bangladesh Teacher Training · বাংলাদেশ শিক্ষক প্রশিক্ষণ</span>
+      </div>
+      {bangladeshTrainingLinks.length === 0 ? (
+        <div className="cy-empty-box">아직 올린 링크가 없습니다.</div>
+      ) : (
+        <ul className="cy-board-list">
+          {bangladeshTrainingLinks.map(link => (
+            <li key={link.id} className="cy-board-item">
+              <a className="cy-board-link" href={link.href} target="_blank" rel="noopener noreferrer">
+                <span className="cy-board-text">
+                  <span className="cy-board-head">
+                    <span className="cy-board-category">링크</span>
+                    <span className="cy-board-title">{link.title}</span>
+                  </span>
+                  {link.summary ? <span className="cy-board-summary">{link.summary}</span> : null}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 /* 미니홈피 왼쪽 위 방문 수입니다. 들어올 때마다 한 번 기록하고 그 결과를 보여 줍니다.
    Firestore 가 설정되지 않았거나 아직 못 받았으면 숫자 자리를 - 로 둡니다. */
 function VisitCounter() {
@@ -1184,17 +1224,116 @@ function VisitCounter() {
   );
 }
 
+/* 사진첩에 사진을 올리는 폼입니다. 브라우저에서 사진을 작게 줄인 뒤 Firestore 에 저장합니다. */
+function PhotoUploadForm() {
+  const [name, setName] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const onPick = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || busy) return;
+    setBusy(true);
+    setMessage(null);
+    try {
+      if (!file.type.startsWith("image/")) throw new Error("이미지 파일만 올릴 수 있어요.");
+      const dataUrl = await fileToResizedDataUrl(file);
+      await addPhotoEntry(name, dataUrl);
+      setName("");
+      setMessage({ kind: "ok", text: "사진을 올렸어요. 고맙습니다!" });
+    } catch (error) {
+      setMessage({
+        kind: "error",
+        text: error instanceof Error ? error.message : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요."
+      });
+    } finally {
+      setBusy(false);
+      if (inputRef.current) inputRef.current.value = "";
+    }
+  };
+
+  return (
+    <form className="cy-guestbook-form cy-photo-upload" onSubmit={e => e.preventDefault()}>
+      <input
+        className="cy-gb-text"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        placeholder="사진 이름 (선택)"
+        maxLength={PHOTO_LIMITS.name}
+        aria-label="사진 이름"
+        disabled={busy}
+      />
+      <label className={`cy-gb-submit cy-photo-upload-btn${busy ? " is-busy" : ""}`}>
+        {busy ? "올리는 중…" : "사진 올리기"}
+        <input ref={inputRef} type="file" accept="image/*" onChange={onPick} disabled={busy} hidden />
+      </label>
+      {message ? (
+        <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
+      ) : null}
+    </form>
+  );
+}
+
+type PhotoView = { key: string; name: string; src: string; remoteId: string | null };
+
 function PhotoTab() {
+  const { editing, owner } = useSiteEditor();
+  const [remote, setRemote] = useState<RemotePhoto[] | null>(null);
+  const [failed, setFailed] = useState(false);
   const [index, setIndex] = useState(0);
-  const total = photos.length;
-  const current = photos[index];
+  const [busyDelete, setBusyDelete] = useState(false);
+
+  useEffect(() => {
+    if (!isPhotoUploadEnabled) return;
+    return subscribePhotos(30, setRemote, () => setFailed(true));
+  }, []);
+
+  const live = isPhotoUploadEnabled && !failed;
+
+  const items = useMemo<PhotoView[]>(() => {
+    const staticOnes: PhotoView[] = photos.map(p => ({
+      key: `static-${p.id}`,
+      name: p.name,
+      src: asset(p.src),
+      remoteId: null
+    }));
+    const remoteOnes: PhotoView[] = (live && remote ? remote : []).map(p => ({
+      key: `remote-${p.id}`,
+      name: p.name || "방문자가 올린 사진",
+      src: p.image,
+      remoteId: p.id
+    }));
+    return [...staticOnes, ...remoteOnes];
+  }, [live, remote]);
+
+  const total = items.length;
+  const safeIndex = total ? Math.min(index, total - 1) : 0;
+  const current = items[safeIndex];
 
   /* 사진을 클릭하면 이전 사진으로 넘어갑니다. (뒤로 넘기기) */
   const goPrev = () => setIndex(i => (i - 1 + total) % total);
 
+  const removeCurrent = async () => {
+    if (!current?.remoteId || busyDelete) return;
+    if (!window.confirm("이 사진을 삭제할까요?")) return;
+    setBusyDelete(true);
+    try {
+      await deleteEntry("photos", current.remoteId);
+      setIndex(0);
+    } catch {
+      /* 무시 */
+    } finally {
+      setBusyDelete(false);
+    }
+  };
+
   return (
     <div className="cy-content-box">
       <SectionTitle title={profile.photoLabel} sub={`${profile.photoSubtitlePrefix} ${total}컷`} />
+
+      {live && remote === null ? <div className="cy-gb-loading">사진을 불러오는 중…</div> : null}
+
       {current && (
         <div className="cy-photo-carousel">
           <button
@@ -1203,26 +1342,39 @@ function PhotoTab() {
             onClick={goPrev}
             aria-label="이전 사진 보기"
           >
-            <img src={asset(current.src)} alt={current.name} loading="lazy" />
+            <img src={current.src} alt={current.name} loading="lazy" />
           </button>
           <div className="cy-photo-caption">
             <span className="cy-photo-name">{current.name}</span>
-            <span className="cy-photo-count">{index + 1} / {total}</span>
+            <span className="cy-photo-count">{safeIndex + 1} / {total}</span>
           </div>
           {total > 1 && (
             <div className="cy-photo-dots">
-              {photos.map((photo, i) => (
+              {items.map((photo, i) => (
                 <button
-                  key={photo.id}
+                  key={photo.key}
                   type="button"
-                  className={`cy-photo-dot${i === index ? " is-active" : ""}`}
+                  className={`cy-photo-dot${i === safeIndex ? " is-active" : ""}`}
                   onClick={() => setIndex(i)}
                   aria-label={`${i + 1}번째 사진 보기`}
                 />
               ))}
             </div>
           )}
+          {live && editing && owner?.isOwner && current.remoteId ? (
+            <div className="cy-mod-row">
+              <button className="cy-mod-btn is-danger" onClick={removeCurrent} disabled={busyDelete}>
+                🗑 이 사진 삭제
+              </button>
+            </div>
+          ) : null}
         </div>
+      )}
+
+      {!live ? (
+        <div className="cy-empty-box">사진 올리기는 준비 중입니다.</div>
+      ) : (
+        <PhotoUploadForm />
       )}
     </div>
   );
@@ -1342,6 +1494,7 @@ function LinkTreeInner() {
                 {activeTab === "photo" && <PhotoTab />}
                 {activeTab === "guestbook" && <GuestbookTab />}
                 {activeTab === "bangladesh" && <BangladeshTab />}
+                {activeTab === "bdtraining" && <BangladeshTrainingTab />}
               </div>
             </div>
 
@@ -1353,7 +1506,7 @@ function LinkTreeInner() {
                   className={"cy-tab-btn " + (tab === "aiedap" ? "cy-tab-aiedap " : "") + (activeTab === tab ? "active" : "")}
                   onClick={() => setActiveTab(tab)}
                 >
-                  {tab === "bangladesh" ? <BdFlag className="cy-tab-flag" /> : null}
+                  {tab === "bangladesh" || tab === "bdtraining" ? <BdFlag className="cy-tab-flag" /> : null}
                   {tab === "aiedap" ? <img className="cy-tab-logo" src={asset("/assets/aiedap-logo.png")} alt="" /> : null}
                   <span className="cy-tab-line">{NAV_LABELS[tab]}</span>
                 </button>

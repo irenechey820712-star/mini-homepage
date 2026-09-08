@@ -994,6 +994,22 @@ body.lt-intro-open {
   border-color: #ff8fab;
 }
 
+/* 사진첩 사진 올리기 폼 */
+.cy-photo-upload {
+  align-items: flex-start;
+}
+.cy-photo-upload .cy-gb-text {
+  width: 100%;
+}
+.cy-photo-upload-btn {
+  display: inline-block;
+  cursor: pointer;
+}
+.cy-photo-upload-btn.is-busy {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .cy-empty-box {
   font-size: 0.78rem;
   line-height: 1.6;

@@ -233,10 +233,69 @@ export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practi
   await updateDoc(doc(store, coll, id), { text: trimmed });
 }
 
-export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard", id: string) {
+export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard" | "photos", id: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   await deleteDoc(doc(store, coll, id));
+}
+
+/* ---------------------------------------------------------------
+   사진첩 (photos) — 방문자가 올린 사진을 작게 줄인 data URL 로 저장합니다.
+   업로드 서버 없이 Firestore 문서 하나에 사진 한 장을 담습니다.
+   --------------------------------------------------------------- */
+export const PHOTO_LIMITS = { name: 40, image: 600_000 } as const;
+export const isPhotoUploadEnabled = isFirebaseConfigured;
+
+export type RemotePhoto = {
+  id: string;
+  name: string;
+  image: string;
+  date: string;
+};
+
+export function subscribePhotos(
+  count: number,
+  onData: (entries: RemotePhoto[]) => void,
+  onError: (error: Error) => void
+) {
+  const store = getDb();
+  if (!store) return () => {};
+
+  const q = query(collection(store, "photos"), orderBy("createdAt", "desc"), fsLimit(count));
+  return onSnapshot(
+    q,
+    snapshot => {
+      onData(
+        snapshot.docs.map(entry => {
+          const data = entry.data();
+          return {
+            id: entry.id,
+            name: String(data.name ?? ""),
+            image: String(data.image ?? ""),
+            date: formatDate(data.createdAt)
+          };
+        })
+      );
+    },
+    error => onError(error as Error)
+  );
+}
+
+export async function addPhotoEntry(name: string, image: string) {
+  const store = getDb();
+  if (!store) throw new Error("사진첩이 설정되지 않았습니다.");
+
+  const trimmedName = name.trim();
+
+  if (!image.startsWith("data:image/")) throw new Error("이미지 파일만 올릴 수 있어요.");
+  if (trimmedName.length > PHOTO_LIMITS.name) throw new Error(`사진 이름은 ${PHOTO_LIMITS.name}자까지 쓸 수 있어요.`);
+  if (image.length > PHOTO_LIMITS.image) throw new Error("사진 용량이 너무 커요. 더 작은 사진으로 다시 시도해 주세요.");
+
+  await addDoc(collection(store, "photos"), {
+    name: trimmedName,
+    image,
+    createdAt: serverTimestamp()
+  });
 }
 
 /* ---------------------------------------------------------------

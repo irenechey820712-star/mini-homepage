@@ -123,6 +123,27 @@ service cloud.firestore {
       allow delete: if false;
     }
 
+    /* 사진첩입니다. 방문자가 누구나 사진 한 장을 올릴 수 있습니다.
+       사진은 브라우저에서 작게 줄인 뒤 data URL 문자열로 저장합니다.
+       - 필드는 name, image, createdAt 세 개만 허용 (이름 40자)
+       - image 는 data:image/ 로 시작하는 문자열이고 60만 자까지만 허용
+       - createdAt 은 서버 시간만 허용, 수정·삭제는 소유자만 */
+    match /photos/{photoId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['name', 'image', 'createdAt'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() <= 40
+        && request.resource.data.image is string
+        && request.resource.data.image.size() >= 1
+        && request.resource.data.image.size() <= 600000
+        && request.resource.data.image.matches('^data:image/.+')
+        && request.resource.data.createdAt == request.time;
+
+      /* 소유자는 삭제(모더레이션) 가능 */
+      allow update, delete: if isOwner();
+    }
+
     /* 그 밖의 모든 경로는 차단합니다. */
     match /{document=**} {
       allow read, write: if false;

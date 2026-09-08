@@ -255,7 +255,25 @@ export const aiedapItems: BoardPost[] = [
   }
 ];
 
-/* 사진첩 탭입니다. */
+/* 방글라데시 연수 탭입니다. 연수와 관련된 링크를 여기에 추가하세요. */
+export type BdTrainingLink = {
+  id: string;
+  title: string;
+  summary?: string;
+  href: string;
+};
+
+export const bangladeshTrainingLinks: BdTrainingLink[] = [
+  {
+    id: "ai-creative-mission-participant",
+    title: "AI 창작 미션 — 참가자 페이지 · AI Creative Mission — Participant Page",
+    summary: "방글라데시 교원 연수 참가자용 페이지 · Participant page for the Bangladesh teacher training",
+    href: "https://irenechey820712-star.github.io/ai-creative-mission/participant.html"
+  }
+];
+
+/* 사진첩 탭입니다. 아래 목록은 기본으로 보이는 사진이고,
+   방문자가 올린 사진은 Firebase(Firestore)에 저장되어 이 목록 뒤에 함께 나옵니다. */
 export type PhotoItem = {
   id: string;
   name: string;
