@@ -225,7 +225,7 @@ export async function addGuestbookEntry(author: string, text: string) {
 }
 
 /* 소유자 전용 — 한줄평 수정·삭제 (firestore.rules 에서 isOwner 로 잠금) */
-export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practiceBoard", id: string, text: string) {
+export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard", id: string, text: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   const trimmed = text.trim();
@@ -233,7 +233,7 @@ export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practi
   await updateDoc(doc(store, coll, id), { text: trimmed });
 }
 
-export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard" | "photos", id: string) {
+export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard" | "photos", id: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   await deleteDoc(doc(store, coll, id));
@@ -356,7 +356,11 @@ export const PRACTICE_LIMITS = { author: 40, step: 60, text: 500, link: 300 } as
 
 export type PracticeEntry = RemoteEntry & { step: string; link: string };
 
+/* 실습 결과물 게시판을 쓰는 곳입니다. AIEDAP 탭과 방글라데시 연수 탭이 각자 다른 목록을 씁니다. */
+export type PracticeCollection = "practiceBoard" | "bdTrainingBoard";
+
 export function subscribePracticeBoard(
+  coll: PracticeCollection,
   count: number,
   onData: (entries: PracticeEntry[]) => void,
   onError: (error: Error) => void
@@ -364,7 +368,7 @@ export function subscribePracticeBoard(
   const store = getDb();
   if (!store) return () => {};
 
-  const q = query(collection(store, "practiceBoard"), orderBy("createdAt", "desc"), fsLimit(count));
+  const q = query(collection(store, coll), orderBy("createdAt", "desc"), fsLimit(count));
   return onSnapshot(
     q,
     snapshot => {
@@ -386,7 +390,13 @@ export function subscribePracticeBoard(
   );
 }
 
-export async function addPracticeEntry(author: string, step: string, text: string, link: string) {
+export async function addPracticeEntry(
+  coll: PracticeCollection,
+  author: string,
+  step: string,
+  text: string,
+  link: string
+) {
   const store = getDb();
   if (!store) throw new Error("실습 결과물 게시판이 설정되지 않았습니다.");
 
@@ -409,5 +419,5 @@ export async function addPracticeEntry(author: string, step: string, text: strin
   };
   if (trimmedLink) payload.link = trimmedLink;
 
-  await addDoc(collection(store, "practiceBoard"), payload);
+  await addDoc(collection(store, coll), payload);
 }

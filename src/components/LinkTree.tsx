@@ -24,6 +24,7 @@ import {
   subscribePhotos,
   subscribePracticeBoard,
   updateEntryText,
+  type PracticeCollection,
   type PracticeEntry,
   type RemoteEntry,
   type RemotePhoto,
@@ -663,7 +664,7 @@ function BoardTab() {
 }
 
 /* 편집 모드에서 소유자에게만 보이는 글 수정·삭제 컨트롤입니다. */
-function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh" | "practiceBoard"; id: string; text: string }) {
+function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard"; id: string; text: string }) {
   const { editing, owner } = useSiteEditor();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(text);
@@ -950,7 +951,7 @@ function BangladeshForm() {
   );
 }
 
-function PracticeBoardForm() {
+function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
   const [author, setAuthor] = useState("");
   const [step, setStep] = useState("");
   const [text, setText] = useState("");
@@ -964,7 +965,7 @@ function PracticeBoardForm() {
     setSending(true);
     setMessage(null);
     try {
-      await addPracticeEntry(author, step, text, link);
+      await addPracticeEntry(coll, author, step, text, link);
       setAuthor("");
       setStep("");
       setText("");
@@ -1024,14 +1025,20 @@ function PracticeBoardForm() {
   );
 }
 
-function PracticeBoard() {
+function PracticeBoard({
+  coll,
+  subtitle = "Practice Results Board — 실습하며 나온 결과물·소감을 올려 주세요"
+}: {
+  coll: PracticeCollection;
+  subtitle?: string;
+}) {
   const [remote, setRemote] = useState<PracticeEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     if (!isFirebaseConfigured) return;
-    return subscribePracticeBoard(50, setRemote, () => setFailed(true));
-  }, []);
+    return subscribePracticeBoard(coll, 50, setRemote, () => setFailed(true));
+  }, [coll]);
 
   const live = isFirebaseConfigured && !failed;
 
@@ -1039,7 +1046,7 @@ function PracticeBoard() {
     <div className="cy-pb-block">
       <div className="cy-section-title">
         실습 결과물 게시판
-        <span className="cy-sub-text">Practice Results Board — 실습하며 나온 결과물·소감을 올려 주세요</span>
+        <span className="cy-sub-text">{subtitle}</span>
       </div>
 
       {!live ? (
@@ -1063,13 +1070,13 @@ function PracticeBoard() {
                   결과물 보기 ↗
                 </a>
               ) : null}
-              <OwnerControls coll="practiceBoard" id={entry.id} text={entry.text} />
+              <OwnerControls coll={coll} id={entry.id} text={entry.text} />
             </div>
           ))}
         </div>
       )}
 
-      {live ? <PracticeBoardForm /> : null}
+      {live ? <PracticeBoardForm coll={coll} /> : null}
     </div>
   );
 }
@@ -1112,7 +1119,7 @@ function AiedapTab() {
           ))}
         </ul>
       )}
-      <PracticeBoard />
+      <PracticeBoard coll="practiceBoard" />
     </div>
   );
 }
@@ -1193,6 +1200,11 @@ function BangladeshTrainingTab() {
           ))}
         </ul>
       )}
+
+      <PracticeBoard
+        coll="bdTrainingBoard"
+        subtitle="Practice Results Board · অনুশীলনের ফলাফল বোর্ড — 연수 실습 결과물·소감을 올려 주세요"
+      />
     </div>
   );
 }
@@ -1243,10 +1255,14 @@ function PhotoUploadForm() {
       setName("");
       setMessage({ kind: "ok", text: "사진을 올렸어요. 고맙습니다!" });
     } catch (error) {
-      setMessage({
-        kind: "error",
-        text: error instanceof Error ? error.message : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요."
-      });
+      const code = (error as { code?: string })?.code;
+      const text =
+        code === "permission-denied"
+          ? "지금은 사진을 저장할 수 없어요. (관리자: Firebase 콘솔에서 Firestore 규칙을 게시해 주세요)"
+          : error instanceof Error
+            ? error.message
+            : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요.";
+      setMessage({ kind: "error", text });
     } finally {
       setBusy(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -1281,8 +1297,9 @@ function PhotoTab() {
   const { editing, owner } = useSiteEditor();
   const [remote, setRemote] = useState<RemotePhoto[] | null>(null);
   const [failed, setFailed] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [busyDelete, setBusyDelete] = useState(false);
+  const remoteCountRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!isPhotoUploadEnabled) return;
@@ -1308,24 +1325,38 @@ function PhotoTab() {
   }, [live, remote]);
 
   const total = items.length;
-  const safeIndex = total ? Math.min(index, total - 1) : 0;
-  const current = items[safeIndex];
 
-  /* 사진을 클릭하면 이전 사진으로 넘어갑니다. (뒤로 넘기기) */
-  const goPrev = () => setIndex(i => (i - 1 + total) % total);
+  /* 새 사진이 올라오면(목록이 늘어나면) 그 사진을 크게 열어 바로 확인시켜 줍니다.
+     방문자가 올린 사진은 최신순이라 기본 사진 바로 뒤(photos.length 번째)에 들어갑니다. */
+  useEffect(() => {
+    if (remote === null) return;
+    if (remoteCountRef.current !== null && remote.length > remoteCountRef.current) {
+      setOpenIndex(photos.length);
+    }
+    remoteCountRef.current = remote.length;
+  }, [remote]);
 
-  const removeCurrent = async () => {
-    if (!current?.remoteId || busyDelete) return;
+  const open = openIndex !== null ? items[Math.min(openIndex, total - 1)] : null;
+
+  const removeOpen = async () => {
+    if (!open?.remoteId || busyDelete) return;
     if (!window.confirm("이 사진을 삭제할까요?")) return;
     setBusyDelete(true);
     try {
-      await deleteEntry("photos", current.remoteId);
-      setIndex(0);
+      await deleteEntry("photos", open.remoteId);
+      setOpenIndex(null);
     } catch {
       /* 무시 */
     } finally {
       setBusyDelete(false);
     }
+  };
+
+  const step = (dir: number) => {
+    setOpenIndex(i => {
+      if (i === null || total === 0) return i;
+      return (i + dir + total) % total;
+    });
   };
 
   return (
@@ -1334,40 +1365,66 @@ function PhotoTab() {
 
       {live && remote === null ? <div className="cy-gb-loading">사진을 불러오는 중…</div> : null}
 
-      {current && (
-        <div className="cy-photo-carousel">
-          <button
-            type="button"
-            className="cy-photo-frame cy-photo-frame-button"
-            onClick={goPrev}
-            aria-label="이전 사진 보기"
-          >
-            <img src={current.src} alt={current.name} loading="lazy" />
-          </button>
-          <div className="cy-photo-caption">
-            <span className="cy-photo-name">{current.name}</span>
-            <span className="cy-photo-count">{safeIndex + 1} / {total}</span>
-          </div>
-          {total > 1 && (
-            <div className="cy-photo-dots">
-              {items.map((photo, i) => (
-                <button
-                  key={photo.key}
-                  type="button"
-                  className={`cy-photo-dot${i === safeIndex ? " is-active" : ""}`}
-                  onClick={() => setIndex(i)}
-                  aria-label={`${i + 1}번째 사진 보기`}
-                />
-              ))}
-            </div>
-          )}
-          {live && editing && owner?.isOwner && current.remoteId ? (
-            <div className="cy-mod-row">
-              <button className="cy-mod-btn is-danger" onClick={removeCurrent} disabled={busyDelete}>
-                🗑 이 사진 삭제
+      {total > 0 ? (
+        <ul className="cy-photo-grid">
+          {items.map((photo, i) => (
+            <li key={photo.key} className="cy-photo-cell">
+              <button
+                type="button"
+                className="cy-photo-thumb"
+                onClick={() => setOpenIndex(i)}
+                aria-label={`${photo.name} 크게 보기`}
+              >
+                <img src={photo.src} alt={photo.name} loading="lazy" />
               </button>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="cy-empty-box">아직 사진이 없어요.</div>
+      )}
+
+      {open && (
+        <div
+          className="cy-photo-lightbox"
+          role="dialog"
+          aria-modal="true"
+          onClick={() => setOpenIndex(null)}
+        >
+          <div className="cy-photo-lightbox-inner" onClick={e => e.stopPropagation()}>
+            <button
+              type="button"
+              className="cy-photo-lightbox-close"
+              onClick={() => setOpenIndex(null)}
+              aria-label="닫기"
+            >
+              ✕
+            </button>
+            <img src={open.src} alt={open.name} />
+            <div className="cy-photo-lightbox-caption">
+              <span className="cy-photo-name">{open.name}</span>
+              <span className="cy-photo-count">
+                {Math.min(openIndex! + 1, total)} / {total}
+              </span>
             </div>
-          ) : null}
+            {total > 1 && (
+              <div className="cy-photo-lightbox-nav">
+                <button type="button" onClick={() => step(-1)} aria-label="이전 사진">
+                  ‹ 이전
+                </button>
+                <button type="button" onClick={() => step(1)} aria-label="다음 사진">
+                  다음 ›
+                </button>
+              </div>
+            )}
+            {live && editing && owner?.isOwner && open.remoteId ? (
+              <div className="cy-mod-row">
+                <button className="cy-mod-btn is-danger" onClick={removeOpen} disabled={busyDelete}>
+                  🗑 이 사진 삭제
+                </button>
+              </div>
+            ) : null}
+          </div>
         </div>
       )}
 
