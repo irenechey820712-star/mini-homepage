@@ -255,7 +255,22 @@ export const aiedapItems: BoardPost[] = [
   }
 ];
 
-/* 방글라데시 연수 탭입니다. 연수와 관련된 링크를 여기에 추가하세요. */
+/* 방글라데시 연수 탭입니다. 위쪽 안내문(3개국어)과 연수 관련 링크입니다. */
+export const bangladeshTrainingIntro: { lang: string; text: string }[] = [
+  {
+    lang: "한국어",
+    text: "방글라데시 교원 연수 참가자를 위한 코너입니다. 아래 참가자 페이지에서 활동을 진행하고, 실습 결과물과 소감을 게시판에 남겨 주세요."
+  },
+  {
+    lang: "English",
+    text: "A corner for the Bangladesh teacher training. Use the participant page below for the activities, then share your practice results and reflections on the board."
+  },
+  {
+    lang: "বাংলা",
+    text: "বাংলাদেশ শিক্ষক প্রশিক্ষণের অংশগ্রহণকারীদের জন্য একটি কর্নার। নিচের অংশগ্রহণকারী পেজ ব্যবহার করে কার্যক্রমগুলো করুন, তারপর আপনার অনুশীলনের ফলাফল ও অনুভূতি বোর্ডে লিখুন।"
+  }
+];
+
 export type BdTrainingLink = {
   id: string;
   title: string;

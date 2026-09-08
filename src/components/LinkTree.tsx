@@ -35,6 +35,7 @@ import { translateMessage, translateTo, type TargetLang, type TranslationResult 
 import {
   aiedapIntro,
   aiedapItems,
+  bangladeshTrainingIntro,
   bangladeshTrainingLinks,
   boardPosts,
   episodes,
@@ -951,7 +952,7 @@ function BangladeshForm() {
   );
 }
 
-function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
+function PracticeBoardForm({ coll, showStep = true }: { coll: PracticeCollection; showStep?: boolean }) {
   const [author, setAuthor] = useState("");
   const [step, setStep] = useState("");
   const [text, setText] = useState("");
@@ -965,7 +966,7 @@ function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
     setSending(true);
     setMessage(null);
     try {
-      await addPracticeEntry(coll, author, step, text, link);
+      await addPracticeEntry(coll, author, showStep ? step : "", text, link);
       setAuthor("");
       setStep("");
       setText("");
@@ -992,24 +993,30 @@ function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
           className="cy-gb-author"
           value={author}
           onChange={e => setAuthor(e.target.value)}
-          placeholder="이름"
+          placeholder={showStep ? "이름" : "이름 · Name · নাম"}
           maxLength={PRACTICE_LIMITS.author}
           aria-label="이름"
         />
-        <input
-          className="cy-gb-text"
-          value={step}
-          onChange={e => setStep(e.target.value)}
-          placeholder="실습 단계 (예: STEP 2 · EFL 리딩 그래프)"
-          maxLength={PRACTICE_LIMITS.step}
-          aria-label="실습 단계"
-        />
+        {showStep ? (
+          <input
+            className="cy-gb-text"
+            value={step}
+            onChange={e => setStep(e.target.value)}
+            placeholder="실습 단계 (예: STEP 2 · EFL 리딩 그래프)"
+            maxLength={PRACTICE_LIMITS.step}
+            aria-label="실습 단계"
+          />
+        ) : null}
       </div>
       <textarea
         className="cy-bd-textarea"
         value={text}
         onChange={e => setText(e.target.value)}
-        placeholder="산출물·소감을 적어 주세요 (예: RETRY 화살표가 켜진 화면을 확인했습니다)"
+        placeholder={
+          showStep
+            ? "산출물·소감을 적어 주세요 (예: RETRY 화살표가 켜진 화면을 확인했습니다)"
+            : "산출물·소감을 적어 주세요 · Write your result or reflection · আপনার ফলাফল বা অনুভূতি লিখুন"
+        }
         maxLength={PRACTICE_LIMITS.text}
         rows={3}
         aria-label="산출물·소감"
@@ -1018,12 +1025,16 @@ function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
         className="cy-gb-text"
         value={link}
         onChange={e => setLink(e.target.value)}
-        placeholder="결과물 링크 (선택 — 스크린샷·문서 등의 URL)"
+        placeholder={
+          showStep
+            ? "결과물 링크 (선택 — 스크린샷·문서 등의 URL)"
+            : "결과물 링크 (선택) · Result link (optional) · ফলাফলের লিংক (ঐচ্ছিক)"
+        }
         maxLength={PRACTICE_LIMITS.link}
         aria-label="결과물 링크"
       />
       <button className="cy-gb-submit" type="submit" disabled={sending}>
-        {sending ? "올리는 중" : "올리기"}
+        {sending ? "올리는 중" : showStep ? "올리기" : "올리기 · Post · পোস্ট"}
       </button>
       {message ? (
         <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
@@ -1034,10 +1045,12 @@ function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
 
 function PracticeBoard({
   coll,
-  subtitle = "Practice Results Board — 실습하며 나온 결과물·소감을 올려 주세요"
+  subtitle = "Practice Results Board — 실습하며 나온 결과물·소감을 올려 주세요",
+  showStep = true
 }: {
   coll: PracticeCollection;
   subtitle?: string;
+  showStep?: boolean;
 }) {
   const [remote, setRemote] = useState<PracticeEntry[] | null>(null);
   const [failed, setFailed] = useState(false);
@@ -1068,7 +1081,7 @@ function PracticeBoard({
             <div key={entry.id} className="cy-bd-item">
               <div className="cy-bd-head">
                 <b><span className="cy-name-heart" aria-hidden="true">📝</span> {entry.author}</b>{" "}
-                <span className="cy-pb-step">{entry.step}</span>{" "}
+                {showStep && entry.step ? <span className="cy-pb-step">{entry.step}</span> : null}{" "}
                 <span className="cg-date">({entry.date})</span>
               </div>
               <div className="cy-bd-original">{entry.text}</div>
@@ -1083,7 +1096,7 @@ function PracticeBoard({
         </div>
       )}
 
-      {isFirebaseConfigured ? <PracticeBoardForm coll={coll} /> : null}
+      {isFirebaseConfigured ? <PracticeBoardForm coll={coll} showStep={showStep} /> : null}
     </div>
   );
 }
@@ -1188,6 +1201,11 @@ function BangladeshTrainingTab() {
         <BdFlag /> 방글라데시 연수
         <span className="cy-sub-text">Bangladesh Teacher Training · বাংলাদেশ শিক্ষক প্রশিক্ষণ</span>
       </div>
+      <div className="cy-bd-intro">
+        {bangladeshTrainingIntro.map(row => (
+          <p key={row.lang}><span className="cy-bd-lang">{row.lang}</span> {row.text}</p>
+        ))}
+      </div>
       {bangladeshTrainingLinks.length === 0 ? (
         <div className="cy-empty-box">아직 올린 링크가 없습니다.</div>
       ) : (
@@ -1210,6 +1228,7 @@ function BangladeshTrainingTab() {
 
       <PracticeBoard
         coll="bdTrainingBoard"
+        showStep={false}
         subtitle="Practice Results Board · অনুশীলনের ফলাফল বোর্ড — 연수 실습 결과물·소감을 올려 주세요"
       />
     </div>

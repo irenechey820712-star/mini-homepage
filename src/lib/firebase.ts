@@ -405,7 +405,7 @@ export async function addPracticeEntry(
   const trimmedText = text.trim();
   const trimmedLink = link.trim();
 
-  if (!trimmedAuthor || !trimmedStep || !trimmedText) throw new Error("이름·실습 단계·소감을 모두 적어 주세요.");
+  if (!trimmedAuthor || !trimmedText) throw new Error("이름과 소감을 모두 적어 주세요.");
   if (trimmedAuthor.length > PRACTICE_LIMITS.author) throw new Error(`이름은 ${PRACTICE_LIMITS.author}자까지 쓸 수 있어요.`);
   if (trimmedStep.length > PRACTICE_LIMITS.step) throw new Error(`실습 단계는 ${PRACTICE_LIMITS.step}자까지 쓸 수 있어요.`);
   if (trimmedText.length > PRACTICE_LIMITS.text) throw new Error(`소감/결과는 ${PRACTICE_LIMITS.text}자까지 쓸 수 있어요.`);
@@ -413,10 +413,10 @@ export async function addPracticeEntry(
 
   const payload: Record<string, unknown> = {
     author: trimmedAuthor,
-    step: trimmedStep,
     text: trimmedText,
     createdAt: serverTimestamp()
   };
+  if (trimmedStep) payload.step = trimmedStep;
   if (trimmedLink) payload.link = trimmedLink;
 
   await addDoc(collection(store, coll), payload);
