@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+<title>Soft K-Culture Icebreaker | Daegu × Korea</title>
+<style>
+:root{
+ --ink:#24233a; --muted:#6e6a80; --paper:#fffafd; --card:#fff;
+ --pink:#ff5ca8; --pink2:#ffaad0; --lime:#d8ff63; --blue:#6677ff;
+ --lav:#eee9ff; --line:#eadfeb; --good:#27835d; --bad:#b76a21; --warm:#fff4df;
+ --shadow:0 18px 52px rgba(59,42,72,.12);
+}
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Inter,system-ui,-apple-system,"Segoe UI",Arial,sans-serif;color:var(--ink);
+ background:
+ radial-gradient(circle at 10% 0%,#ffe4f1 0,transparent 24%),
+ radial-gradient(circle at 95% 5%,#eeffc8 0,transparent 22%),
+ linear-gradient(180deg,#fffafd,#fff8fc 58%,#f6f8ff);
+}
+.wrap{max-width:1040px;margin:auto;padding:22px 18px 60px}
+.hero{
+ position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:30px;
+ background:linear-gradient(135deg,#fff 0%,#fff0f8 60%,#f3ffd1);box-shadow:var(--shadow)
+}
+.hero:after{
+ content:"K-CULTURE";position:absolute;right:-18px;bottom:-30px;font-size:95px;font-weight:1000;
+ color:rgba(255,92,168,.065);letter-spacing:-6px;pointer-events:none
+}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-flex;padding:7px 11px;border-radius:999px;font-size:12px;font-weight:950}
+.chip.pink{background:#ffe2f0;color:#a12667}.chip.lime{background:var(--lime);color:#4a5618}.chip.blue{background:#e7ebff;color:#4052bd}
+h1{font-size:clamp(35px,5.6vw,61px);line-height:1.02;margin:15px 0 10px;letter-spacing:-.045em}
+.hero p{max-width:790px;color:var(--muted);line-height:1.7;margin:0;font-size:16px}
+.lang{position:absolute;top:20px;right:20px;border:1px solid var(--line);background:#fff;padding:8px 12px;border-radius:999px;font-weight:900;cursor:pointer;z-index:3}
+.rulebar{display:flex;gap:9px;flex-wrap:wrap;margin-top:18px}
+.rule{padding:9px 12px;border-radius:13px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:850}
+.progress-shell{margin:23px 2px 15px}
+.progress-top{display:flex;justify-content:space-between;font-size:14px;font-weight:900}
+.progress{height:12px;border-radius:999px;background:#efe6ee;overflow:hidden;margin-top:8px}
+#bar{height:100%;width:10%;background:linear-gradient(90deg,var(--pink),var(--pink2),var(--lime));transition:.3s}
+.card{background:var(--card);border:1px solid var(--line);border-radius:28px;padding:25px;box-shadow:var(--shadow)}
+.meta{display:flex;justify-content:space-between;gap:10px;align-items:center}
+.type{display:inline-flex;gap:8px;align-items:center;background:#fff1f7;border:1px solid #ffcbe2;color:#9f2d68;padding:7px 10px;border-radius:999px;font-size:12px;font-weight:950}
+.qnum{font-size:13px;font-weight:850;color:var(--muted)}
+.question{font-size:clamp(22px,3.2vw,30px);font-weight:950;line-height:1.38;margin:14px 0 16px;letter-spacing:-.015em}
+.visual{
+ background:linear-gradient(135deg,#fff8fb,#f8f9ff);border:1px dashed #dbcfe0;border-radius:18px;
+ padding:18px;margin:8px 0 16px;text-align:center;font-size:clamp(30px,6vw,48px);line-height:1.4;letter-spacing:.06em
+}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.option{
+ border:1.5px solid #e5dce5;background:#fff;border-radius:16px;padding:15px;min-height:58px;
+ text-align:left;color:var(--ink);font-weight:850;cursor:pointer;transition:.16s
+}
+.option:hover{transform:translateY(-1px);border-color:var(--pink2)}
+.option.tried{background:#fff8ec;border-color:#ffc47a;color:#82541a}
+.option.correct{background:#eefbf4;border-color:#79c9a2;color:#1e6947}
+.feedback{margin-top:13px;padding:12px 14px;border-radius:14px;background:#faf7fa;color:var(--muted);line-height:1.55;min-height:49px}
+.hintlabel{margin-top:16px;font-size:11px;font-weight:950;letter-spacing:.09em;color:var(--muted)}
+.hints{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.hintbtn{border:0;border-radius:13px;padding:11px 8px;background:#f0e6ef;color:#6f3e5e;font-weight:950;cursor:pointer}
+.hintbtn:disabled{opacity:.38;cursor:not-allowed}.hintbtn.active{background:var(--lime);color:#445113}
+.hintbox{display:none;margin-top:10px;padding:14px 15px;background:#fff5fa;border-left:5px solid var(--pink);border-radius:12px;line-height:1.6}
+.reveal{display:none;margin-top:14px;padding:16px;background:#f5f8ff;border:1px solid #dce3ff;border-radius:16px;line-height:1.62}
+.reveal strong{color:#4052bd}
+.talk{display:none;margin-top:11px;padding:14px;background:#f7ffd9;border:1px solid #d7ef73;border-radius:15px;line-height:1.55;font-weight:800}
+.actions{display:flex;justify-content:flex-end;margin-top:16px}
+.next,.restart{border:0;border-radius:14px;padding:13px 18px;font-weight:950;cursor:pointer}
+.next{background:var(--ink);color:#fff}.next:disabled{opacity:.35;cursor:not-allowed}.restart{background:var(--pink);color:#fff}
+.result{display:none;text-align:center;padding:38px 24px}
+.score{font-size:68px;font-weight:1000;color:var(--pink);letter-spacing:-.05em}
+.result h2{font-size:30px;margin:5px 0}.result p{max-width:690px;margin:8px auto 20px;color:var(--muted);line-height:1.65}
+.footer{font-size:11.5px;color:#7d8293;text-align:center;margin-top:18px;line-height:1.6}
+@media(max-width:700px){
+ .lang{position:static;float:right;margin-bottom:8px}.hero{padding:24px 20px}
+ .options,.hints{grid-template-columns:1fr}.hero:after{font-size:65px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+<button class="lang" onclick="toggleLang()">EN / 한국어</button>
+<div class="chips">
+ <span class="chip pink">BANGLADESH × KOREA</span>
+ <span class="chip lime">ICEBREAKER</span>
+ <span class="chip blue">DAEGU + K-CULTURE</span>
+</div>
+<h1 id="heroTitle">Soft K-Culture<br>Icebreaker</h1>
+<p id="heroIntro">A light, playful quiz for visiting teachers: movies, K-drama vibes, food, night markets and Daegu travel. Wrong answers stay secret — unlock Hint 1, 2 and 3 and keep talking.</p>
+<div class="rulebar">
+ <span class="rule" id="r1">🎬 Movies & K-content</span>
+ <span class="rule" id="r2">🍗 Food & festivals</span>
+ <span class="rule" id="r3">🧩 Emoji & Spot the Difference</span>
+ <span class="rule" id="r4">💬 Talk Together after every answer</span>
+</div>
+</section>
+
+<div class="progress-shell">
+ <div class="progress-top"><span id="progressText"></span><span id="scoreText"></span></div>
+ <div class="progress"><div id="bar"></div></div>
+</div>
+
+<section class="card" id="quizCard">
+ <div class="meta"><span class="type" id="type"></span><span class="qnum" id="qnum"></span></div>
+ <div class="question" id="question"></div>
+ <div class="visual" id="visual"></div>
+ <div class="options" id="options"></div>
+ <div class="feedback" id="feedback"></div>
+ <div class="hintlabel" id="hintLabel">3-LEVEL HINTS</div>
+ <div class="hints">
+   <button class="hintbtn" id="h0" onclick="showHint(0)">Hint 1</button>
+   <button class="hintbtn" id="h1" onclick="showHint(1)" disabled>Hint 2</button>
+   <button class="hintbtn" id="h2" onclick="showHint(2)" disabled>Hint 3</button>
+ </div>
+ <div class="hintbox" id="hintbox"></div>
+ <div class="reveal" id="reveal"></div>
+ <div class="talk" id="talk"></div>
+ <div class="actions"><button class="next" id="nextBtn" onclick="nextQuestion()" disabled>Next →</button></div>
+</section>
+
+<section class="card result" id="result">
+ <div class="score" id="finalScore"></div>
+ <h2 id="resultTitle"></h2>
+ <p id="resultText"></p>
+ <button class="restart" onclick="restartQuiz()" id="restartBtn">Play Again</button>
+</section>
+
+<div class="footer" id="footer">Made as a conversation-first cultural tourism icebreaker for international teacher exchange.</div>
+</div>
+
+<script>
+const quiz=[
+{
+ area:"KOREA", typeEn:"🎬 MOVIE TOURISM", typeKo:"🎬 영화 관광",
+ qEn:"A recent animated K-pop film inspired an official Korea travel product that visits Bukchon Hanok Village, Gwangjang Market and other Seoul spots. Which title is it?",
+ qKo:"최근 한 K-pop 애니메이션 영화가 인기를 끌며 북촌한옥마을·광장시장 등 서울 명소를 연결한 공식 여행상품까지 등장했습니다. 어떤 작품일까요?",
+ visual:"🎤✨👹⚔️🇰🇷",
+ oe:["KPop Demon Hunters","Parasite","Train to Busan","Extreme Job"],
+ ok:["KPop Demon Hunters","기생충","부산행","극한직업"], a:0,
+ he:["Think animation + K-pop + supernatural action.","The heroes perform on stage and fight something that is definitely not human.","The title literally combines K-pop, demons and hunters."],
+ hk:["애니메이션 + K-pop + 초자연 액션을 떠올려 보세요.","주인공들은 무대에서 공연하고 인간이 아닌 존재와 싸웁니다.","제목에 K-pop, demon, hunter가 그대로 들어갑니다."],
+ expEn:"KPop Demon Hunters has become a tourism hook as well as a screen hit. VISITKOREA currently lists a themed Seoul tour running through the end of 2026.",
+ expKo:"KPop Demon Hunters는 영상 콘텐츠를 넘어 실제 관광 콘텐츠로 확장되었습니다. VISITKOREA에는 2026년 말까지 운영되는 테마 서울 투어 상품도 소개되어 있습니다.",
+ talkEn:"💬 Talk Together: Which movie or series has made you want to visit a real place?",
+ talkKo:"💬 함께 이야기해요: 영화나 드라마 때문에 실제로 가보고 싶어진 장소가 있나요?"
+},
+{
+ area:"KOREA", typeEn:"🧩 EMOJI QUIZ", typeKo:"🧩 이모지 퀴즈",
+ qEn:"Guess the Korean drama / survival-show title from the emojis.",
+ qKo:"이모지만 보고 한국 드라마/서바이벌 작품 제목을 맞혀보세요.",
+ visual:"🦑 🎮 🔺⭕⬜",
+ oe:["Squid Game","Kingdom","Moving","Reply 1988"],
+ ok:["오징어 게임","킹덤","무빙","응답하라 1988"], a:0,
+ he:["The title includes an animal.","Its story turns familiar childhood games into dangerous competition.","The animal is a squid."],
+ hk:["제목에 동물 이름이 들어갑니다.","익숙한 어린이 놀이가 위험한 경쟁으로 바뀌는 이야기입니다.","그 동물은 오징어입니다."],
+ expEn:"Squid Game remains one of the most recognizable K-content titles worldwide. Korea Tourism has even promoted themed tours connected to filming locations and traditional-game culture.",
+ expKo:"오징어 게임은 전 세계에서 가장 쉽게 알아보는 K-콘텐츠 중 하나입니다. 한국관광 분야에서도 촬영지와 전통놀이를 연결한 테마 관광상품이 운영될 만큼 관광 콘텐츠로 확장됐습니다.",
+ talkEn:"💬 Talk Together: What childhood game from Bangladesh should become a global TV challenge?",
+ talkKo:"💬 함께 이야기해요: 방글라데시의 어린이 놀이 중 세계적인 TV 게임으로 만들면 재미있을 것은 무엇일까요?"
+},
+{
+ area:"DAEGU", typeEn:"🍗 FOOD FESTIVAL", typeKo:"🍗 먹거리 축제",
+ qEn:"Daegu has a festival built around one of Korea's most famous casual food pairings. What does 'Chimac' mean?",
+ qKo:"대구에는 한국의 대표적인 캐주얼 먹거리 조합을 테마로 한 축제가 있습니다. '치맥'은 무엇의 조합일까요?",
+ visual:"🍗 + 🍺 = ❓",
+ oe:["Chicken + beer","Kimchi + tea","Tteokbokki + coffee","Bulgogi + soda"],
+ ok:["치킨 + 맥주","김치 + 차","떡볶이 + 커피","불고기 + 탄산음료"], a:0,
+ he:["One item is crispy and usually shared.","The second item is a cold drink commonly paired with fried chicken.","'맥' comes from 맥주."],
+ hk:["한 가지는 바삭하고 여럿이 함께 먹기 좋은 음식입니다.","두 번째는 치킨과 자주 함께 마시는 차가운 음료입니다.","'맥'은 맥주에서 왔습니다."],
+ expEn:"The Daegu Chimac Festival turns an everyday Korean food pairing into a large-scale cultural tourism event with performances, food and nightlife.",
+ expKo:"대구치맥페스티벌은 일상적인 한국의 음식 조합을 공연·먹거리·야간관광과 결합한 대형 문화관광 축제로 발전시킨 사례입니다.",
+ talkEn:"💬 Talk Together: What food + drink combination would represent Bangladesh?",
+ talkKo:"💬 함께 이야기해요: 방글라데시를 대표하는 '음식 + 음료' 조합을 만든다면 무엇인가요?"
+},
+{
+ area:"DAEGU", typeEn:"👀 SPOT THE DIFFERENCE", typeKo:"👀 다른 것 찾기",
+ qEn:"Spot the one different symbol. No cultural knowledge needed — just wake up your eyes!",
+ qKo:"딱 하나 다른 기호를 찾아보세요. 문화 지식은 필요 없습니다. 눈을 깨우는 아이스브레이킹!",
+ visual:"🍗 🍗 🍗 🍗 🍗\n🍗 🍗 🍗 🥟 🍗\n🍗 🍗 🍗 🍗 🍗",
+ oe:["🥟 Dumpling","🍗 Chicken","🍺 Beer","🌶️ Chili"],
+ ok:["🥟 만두","🍗 치킨","🍺 맥주","🌶️ 고추"], a:0,
+ he:["Look at the middle row.","Compare shapes, not colors.","One item has a folded crescent shape."],
+ hk:["가운데 줄을 먼저 보세요.","색보다 모양을 비교해 보세요.","접힌 반달 모양 하나가 숨어 있습니다."],
+ expEn:"Warm-up complete! This kind of visual puzzle works well before moving into culture questions because everyone can join regardless of prior knowledge.",
+ expKo:"워밍업 완료! 이런 시각 퍼즐은 사전지식과 관계없이 누구나 참여할 수 있어 문화 퀴즈 사이에 넣기 좋은 아이스브레이킹입니다.",
+ talkEn:"💬 Talk Together: Which Korean food emoji do you recognize already?",
+ talkKo:"💬 함께 이야기해요: 지금 보이는 한국 음식 관련 이모지 중 이미 익숙한 것은 무엇인가요?"
+},
+{
+ area:"DAEGU", typeEn:"🌙 NIGHT TOUR", typeKo:"🌙 야간 관광",
+ qEn:"Which Daegu place is famous for street food, performances and a lively night-market atmosphere after dark?",
+ qKo:"밤이 되면 길거리 음식, 공연, 야시장 분위기를 함께 즐길 수 있는 대구의 대표 장소는 어디일까요?",
+ visual:"🌙🏮🍢🎶🛍️",
+ oe:["Seomun Night Market","Daegu Airport","EXCO","Daegu Stadium"],
+ ok:["서문시장 야시장","대구공항","엑스코","대구스타디움"], a:0,
+ he:["It is a traditional market that becomes especially lively at night.","Food stalls and performances are key parts of the experience.","Its name means 'West Gate Market.'"],
+ hk:["전통시장이지만 특히 밤에 활기가 살아납니다.","먹거리 매대와 공연이 중요한 체험 요소입니다.","이름을 풀면 '서쪽 문 시장'입니다."],
+ expEn:"Seomun Night Market is promoted by Daegu as a major night-tourism attraction with food, performances and events.",
+ expKo:"서문시장 야시장은 먹거리와 공연, 이벤트를 함께 즐길 수 있는 대구의 대표 야간관광 명소로 소개되고 있습니다.",
+ talkEn:"💬 Talk Together: What night market or evening street in Bangladesh would you recommend to a Korean visitor?",
+ talkKo:"💬 함께 이야기해요: 한국 관광객에게 추천하고 싶은 방글라데시의 야시장이나 저녁 거리가 있나요?"
+},
+{
+ area:"KOREA", typeEn:"📺 K-DRAMA TRAVEL", typeKo:"📺 K-드라마 여행",
+ qEn:"K-drama fans often visit real filming locations. Which Seoul place is especially famous for riverside dates, picnics and night views in dramas?",
+ qKo:"K-드라마 팬들은 실제 촬영지를 찾아가기도 합니다. 드라마 속 데이트·피크닉·야경 장면에 자주 등장하는 서울의 장소는 어디일까요?",
+ visual:"🌃🚲🍜🧺💑",
+ oe:["Hangang Park","Jeju Olle Trail","Haeundae Beach","Andong Hahoe Village"],
+ ok:["한강공원","제주 올레길","해운대해수욕장","안동 하회마을"], a:0,
+ he:["Think Seoul, not an island or historic village.","People cycle, picnic and eat convenience-store ramyeon beside the water.","The river runs through central Seoul."],
+ hk:["섬이나 전통마을이 아니라 서울을 떠올려 보세요.","강가에서 자전거를 타고 피크닉을 하며 편의점 라면도 먹습니다.","서울 중심을 흐르는 강입니다."],
+ expEn:"Hangang Park is a recurring K-drama and advertising backdrop and is also promoted as a tourism experience where visitors can recreate familiar screen moments.",
+ expKo:"한강공원은 K-드라마와 광고에 자주 등장하는 장소이며, 화면 속 장면을 실제로 체험해보는 한류관광 장소로도 활용됩니다.",
+ talkEn:"💬 Talk Together: Picnic by a river, mountain or beach — which one would your group choose?",
+ talkKo:"💬 함께 이야기해요: 피크닉을 간다면 강, 산, 바다 중 어디를 고르시겠어요?"
+},
+{
+ area:"KOREA", typeEn:"👘 EMOJI CULTURE", typeKo:"👘 이모지 문화",
+ qEn:"Guess the cultural experience from the emojis.",
+ qKo:"이모지만 보고 한국 문화체험을 맞혀보세요.",
+ visual:"🏯 + 👘 + 📸 = ❓",
+ oe:["Wearing hanbok at a palace","Camping on Jeju","Watching baseball","Going to a jjimjilbang"],
+ ok:["궁궐에서 한복 입기","제주 캠핑","야구 관람","찜질방 가기"], a:0,
+ he:["Tourists often rent clothing for this experience.","The setting is connected with royal history.","Traditional Korean clothing is called hanbok."],
+ hk:["관광객들이 옷을 빌려 입고 즐기는 체험입니다.","배경은 왕실 역사와 연결됩니다.","한국의 전통의상은 한복입니다."],
+ expEn:"Renting hanbok and visiting palaces has become one of the most accessible cultural-tourism experiences for international visitors to Seoul.",
+ expKo:"한복을 빌려 입고 궁궐을 방문하는 경험은 외국인 관광객이 쉽게 참여할 수 있는 대표적인 한국 문화관광 체험 중 하나입니다.",
+ talkEn:"💬 Talk Together: What traditional clothing from Bangladesh would you want Korean visitors to try?",
+ talkKo:"💬 함께 이야기해요: 한국 관광객에게 꼭 입혀보고 싶은 방글라데시 전통 의상은 무엇인가요?"
+},
+{
+ area:"DAEGU", typeEn:"🎨 CITY STORY", typeKo:"🎨 도시 이야기",
+ qEn:"If you want to walk through old streets, churches, historic houses and stories of modern Daegu, which experience fits best?",
+ qKo:"오래된 거리, 성당, 역사 건축물과 대구의 근대 이야기를 걸으면서 만나고 싶다면 어떤 코스가 가장 잘 맞을까요?",
+ visual:"🚶‍♀️🏘️⛪📖☕",
+ oe:["Modern Culture Alley","Apsan Cable Car","Daegu Stadium Tour","Airport Shopping"],
+ ok:["근대문화골목","앞산 케이블카","대구스타디움 투어","공항 쇼핑"], a:0,
+ he:["It is a walking course inside the old city.","The experience is about architecture and stories rather than nature.","The name includes 'modern culture' and 'alley.'"],
+ hk:["도심의 오래된 공간을 걸어서 둘러보는 코스입니다.","자연보다 건축과 이야기가 중심입니다.","이름에 '근대문화'와 '골목'이 들어갑니다."],
+ expEn:"Daegu's Modern Culture Alley turns preserved streets and buildings into a story-based walking experience, making local history feel approachable rather than museum-like.",
+ expKo:"대구 근대문화골목은 보존된 거리와 건축물을 스토리형 도보여행으로 연결해, 박물관식 설명보다 훨씬 가볍게 지역 역사를 체험하게 해줍니다.",
+ talkEn:"💬 Talk Together: Do you prefer history through museums or by walking through real neighborhoods?",
+ talkKo:"💬 함께 이야기해요: 역사는 박물관에서 배우는 것과 실제 동네를 걸으며 배우는 것 중 어느 쪽이 더 좋나요?"
+},
+{
+ area:"KOREA", typeEn:"🍜 SPOT THE DIFFERENCE", typeKo:"🍜 다른 것 찾기",
+ qEn:"One snack does not belong in this 'K-street-food mood board.' Which one is it?",
+ qKo:"다음 'K-길거리음식 무드보드'에서 분위기가 다른 음식 하나를 찾아보세요.",
+ visual:"🍢 🌭 🥞 🍜\n🍢 🌭 🧇 🍜",
+ oe:["🧇 Waffle","🍢 Skewer","🌭 Hot dog","🍜 Noodles"],
+ ok:["🧇 와플","🍢 꼬치","🌭 핫도그","🍜 면요리"], a:0,
+ he:["Compare the same position in the two rows.","Three positions repeat exactly.","The third item changes."],
+ hk:["두 줄의 같은 위치를 비교해 보세요.","세 위치는 완전히 같습니다.","세 번째 음식만 바뀝니다."],
+ expEn:"This is intentionally a visual rather than factual challenge. It gives the group a quick success moment before the final question.",
+ expKo:"이 문제는 지식 문제가 아니라 시각 퍼즐입니다. 마지막 문제 전에 모두가 빠르게 성공 경험을 얻도록 넣었습니다.",
+ talkEn:"💬 Talk Together: Which Korean street food would you try first?",
+ talkKo:"💬 함께 이야기해요: 한국 길거리 음식 중 가장 먼저 먹어보고 싶은 것은 무엇인가요?"
+},
+{
+ area:"KOREA", typeEn:"🎥 FILMING-LOCATION GAME", typeKo:"🎥 촬영지 게임",
+ qEn:"You're designing a one-day 'K-content trip.' Which itinerary feels most like today's screen-tourism trend?",
+ qKo:"하루짜리 'K-콘텐츠 여행'을 만든다고 해봅시다. 최근의 촬영지 관광 트렌드와 가장 잘 맞는 코스는 무엇일까요?",
+ visual:"🎬➡️📍➡️📸➡️🍴",
+ oe:[
+ "Visit a filming location, recreate a scene, then try nearby local food",
+ "Stay only inside a hotel and stream dramas all day",
+ "Visit only office districts with no link to content",
+ "Read a plot summary without visiting any place"
+ ],
+ ok:[
+ "촬영지 방문 → 장면 재현 → 주변 로컬 음식 체험",
+ "호텔에서 하루 종일 드라마만 보기",
+ "콘텐츠와 관계없는 업무지구만 방문",
+ "장소 방문 없이 줄거리만 읽기"
+ ], a:0,
+ he:["Modern screen tourism is participatory.","Fans often want both a photo moment and a local experience.","Think 'step into the scene,' not simply 'watch the screen.'"],
+ hk:["최근 스크린 관광은 참여형입니다.","팬들은 사진 포인트와 현지 체험을 함께 원합니다.","'화면을 보기'보다 '장면 속으로 들어가기'를 생각해 보세요."],
+ expEn:"Korea Tourism currently curates routes built around filming locations, scene recreation and nearby food or neighborhood experiences — exactly this kind of participatory screen tourism.",
+ expKo:"한국관광에서는 실제 촬영지, 장면 재현, 주변 음식·동네 체험을 연결한 코스를 꾸준히 소개하고 있습니다. 최근 한류관광은 '보는 것'에서 '직접 장면 속에 들어가 보는 것'으로 확장되는 흐름이 뚜렷합니다.",
+ talkEn:"💬 Final Talk: If we made a Bangladesh × Korea screen-tourism route together, what would be Stop #1?",
+ talkKo:"💬 마지막 이야기: 방글라데시 × 한국 공동 스크린관광 코스를 만든다면 1번 장소는 어디가 좋을까요?"
+}
+];
+
+let idx=0,score=0,solved=false,lang="en",hints=[false,false,false],tries=0;
+const $=id=>document.getElementById(id);
+const tx=(en,ko)=>lang==="en"?en:ko;
+
+function render(){
+ const q=quiz[idx];solved=false;hints=[false,false,false];tries=0;
+ $("type").textContent=q.area+" · "+tx(q.typeEn,q.typeKo);
+ $("qnum").textContent=tx(`QUESTION ${idx+1} / ${quiz.length}`,`${quiz.length}문제 중 ${idx+1}번`);
+ $("question").textContent=tx(q.qEn,q.qKo);
+ $("visual").textContent=q.visual;
+ $("progressText").textContent=tx(`Question ${idx+1} of ${quiz.length}`,`${quiz.length}문제 중 ${idx+1}번`);
+ $("scoreText").textContent=tx(`Solved ${score}`,`정답 ${score}`);
+ $("bar").style.width=((idx+1)/quiz.length*100)+"%";
+ $("feedback").textContent=tx("Choose freely. If it's wrong, the answer stays hidden.","편하게 골라보세요. 틀려도 정답은 바로 공개되지 않습니다.");
+ $("hintbox").style.display="none";$("reveal").style.display="none";$("talk").style.display="none";
+ $("nextBtn").disabled=true;$("nextBtn").textContent=tx(idx===quiz.length-1?"See Result →":"Next →",idx===quiz.length-1?"결과 보기 →":"다음 →");
+ ["h0","h1","h2"].forEach((id,i)=>{$(id).classList.remove("active");$(id).disabled=i!==0;});
+ $("hintLabel").textContent=tx("3-LEVEL HINTS","3단계 힌트");
+ $("h0").textContent=tx("Hint 1 · Gentle","힌트 1 · 살짝");
+ $("h1").textContent=tx("Hint 2 · Closer","힌트 2 · 조금 더");
+ $("h2").textContent=tx("Hint 3 · Almost!","힌트 3 · 거의 다!");
+ const box=$("options");box.innerHTML="";
+ const ops=tx(q.oe,q.ok);
+ ops.forEach((o,i)=>{
+  const b=document.createElement("button");b.className="option";b.textContent=o;b.onclick=()=>choose(i,b);box.appendChild(b);
+ });
+}
+function choose(i,b){
+ if(solved)return;tries++;
+ const q=quiz[idx];
+ if(i===q.a){
+  solved=true;score++;b.classList.add("correct");
+  [...document.querySelectorAll(".option")].forEach(x=>x.disabled=true);
+  $("feedback").textContent=tx(tries===1?"Nice! First try!":"Yes — you found it!","좋아요! 첫 시도 정답!","맞았습니다! 힌트와 추론 성공!");
+  $("reveal").style.display="block";
+  $("reveal").innerHTML="<strong>"+tx("WHY IT'S FUN","왜 재미있을까요")+"</strong><br>"+tx(q.expEn,q.expKo);
+  $("talk").style.display="block";$("talk").textContent=tx(q.talkEn,q.talkKo);
+  $("nextBtn").disabled=false;
+ }else{
+  b.classList.add("tried");b.disabled=true;
+  $("feedback").textContent=tx("Not this one — but no spoiler. Try again or open a hint.","이건 아니지만 정답은 비밀! 다시 골라보거나 힌트를 열어보세요.");
+ }
+}
+function showHint(n){
+ if(n>0&&!hints[n-1])return;
+ hints[n]=true;const q=quiz[idx];
+ $("hintbox").style.display="block";$("hintbox").textContent="💡 "+tx(q.he[n],q.hk[n]);
+ $("h"+n).classList.add("active");if(n<2)$("h"+(n+1)).disabled=false;
+}
+function nextQuestion(){if(!solved)return;if(idx<quiz.length-1){idx++;render()}else showResult()}
+function showResult(){
+ $("quizCard").style.display="none";$("result").style.display="block";$("bar").style.width="100%";
+ $("progressText").textContent=tx("Icebreaker complete!","아이스브레이킹 완료!");$("scoreText").textContent=score+"/"+quiz.length;
+ $("finalScore").textContent=score+"/"+quiz.length;
+ $("resultTitle").textContent=tx(score>=8?"K-Culture Connector!":"K-Culture Explorer!","K-컬처 커넥터!","K-컬처 탐험가!");
+ $("resultText").textContent=tx(
+  "The real goal wasn't the score. You now have 10 easy conversation starters about movies, food, Daegu and Korean travel culture.",
+  "진짜 목표는 점수가 아닙니다. 영화·음식·대구·한국 관광을 소재로 바로 대화할 수 있는 10개의 이야기거리를 만들었습니다."
+ );
+}
+function restartQuiz(){idx=0;score=0;$("result").style.display="none";$("quizCard").style.display="block";render()}
+function toggleLang(){
+ lang=lang==="en"?"ko":"en";
+ $("heroTitle").innerHTML=tx("Soft K-Culture<br>Icebreaker","말랑말랑 K-컬처<br>아이스브레이킹");
+ $("heroIntro").textContent=tx(
+  "A light, playful quiz for visiting teachers: movies, K-drama vibes, food, night markets and Daegu travel. Wrong answers stay secret — unlock Hint 1, 2 and 3 and keep talking.",
+  "방문 선생님들과 가볍게 즐기는 문화관광 퀴즈입니다. 영화·K-드라마 감성·먹거리·야시장·대구 여행을 섞었습니다. 틀려도 정답은 비밀, 1·2·3단계 힌트를 열며 자연스럽게 대화해 보세요."
+ );
+ $("r1").textContent=tx("🎬 Movies & K-content","🎬 영화 & K-콘텐츠");
+ $("r2").textContent=tx("🍗 Food & festivals","🍗 음식 & 축제");
+ $("r3").textContent=tx("🧩 Emoji & Spot the Difference","🧩 이모지 & 다른 것 찾기");
+ $("r4").textContent=tx("💬 Talk Together after every answer","💬 정답 뒤 함께 이야기하기");
+ $("footer").textContent=tx(
+  "Made as a conversation-first cultural tourism icebreaker for international teacher exchange.",
+  "국제교류 교사 방문을 위한 대화 중심 문화관광 아이스브레이킹 퀴즈입니다."
+ );
+ $("restartBtn").textContent=tx("Play Again","다시 하기");
+ if($("quizCard").style.display!=="none")render();else showResult();
+}
+render();
+</script>
+</body>
+</html>

@@ -290,6 +290,12 @@ export const bangladeshTrainingLinks: BdTrainingLink[] = [
     title: "나만의 AI 영상 만들기 (Canva) · Create Your Own AI Video · নিজের AI ভিডিও তৈরি করুন",
     summary: "AI 영상 제작 안내 자료 · A Canva guide to making your own AI video · নিজের AI ভিডিও তৈরির ক্যানভা গাইড",
     href: "https://canva.link/yuczzd3dcuhzf89"
+  },
+  {
+    id: "k-culture-icebreaker",
+    title: "K컬처 아이스브레이커 퀴즈 (대구·한국) · K-Culture Icebreaker Quiz",
+    summary: "영화·K드라마·음식·야시장·대구 여행을 소재로 한 가벼운 아이스브레이킹 퀴즈 · A light icebreaker quiz on movies, K-drama, food, night markets and Daegu travel",
+    href: "https://irenechey820712-star.github.io/mini-homepage/k-culture-icebreaker.html"
   }
 ];
 
