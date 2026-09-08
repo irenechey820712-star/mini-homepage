@@ -972,7 +972,14 @@ function PracticeBoardForm({ coll }: { coll: PracticeCollection }) {
       setLink("");
       setMessage({ kind: "ok", text: "실습 결과물을 올렸어요. 고맙습니다!" });
     } catch (error) {
-      setMessage({ kind: "error", text: error instanceof Error ? error.message : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요." });
+      const code = (error as { code?: string })?.code;
+      const text =
+        code === "permission-denied"
+          ? "지금은 글을 저장할 수 없어요. (관리자: Firebase 콘솔에서 Firestore 규칙을 게시해 주세요)"
+          : error instanceof Error
+            ? error.message
+            : "올리지 못했어요. 잠시 뒤 다시 시도해 주세요.";
+      setMessage({ kind: "error", text });
     } finally {
       setSending(false);
     }
@@ -1040,8 +1047,6 @@ function PracticeBoard({
     return subscribePracticeBoard(coll, 50, setRemote, () => setFailed(true));
   }, [coll]);
 
-  const live = isFirebaseConfigured && !failed;
-
   return (
     <div className="cy-pb-block">
       <div className="cy-section-title">
@@ -1049,8 +1054,10 @@ function PracticeBoard({
         <span className="cy-sub-text">{subtitle}</span>
       </div>
 
-      {!live ? (
+      {!isFirebaseConfigured ? (
         <div className="cy-empty-box">게시판은 준비 중입니다.</div>
+      ) : failed ? (
+        <div className="cy-gb-loading">아직 올라온 글이 없어요.</div>
       ) : remote === null ? (
         <div className="cy-gb-loading">불러오는 중…</div>
       ) : remote.length === 0 ? (
@@ -1076,7 +1083,7 @@ function PracticeBoard({
         </div>
       )}
 
-      {live ? <PracticeBoardForm coll={coll} /> : null}
+      {isFirebaseConfigured ? <PracticeBoardForm coll={coll} /> : null}
     </div>
   );
 }
