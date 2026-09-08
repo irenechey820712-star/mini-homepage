@@ -1631,6 +1631,9 @@ body.lt-intro-open {
   padding-top: 14px;
   border-top: 1px dashed #ddd;
 }
+.cy-gratitude-text {
+  white-space: pre-wrap;
+}
 .cy-pb-note {
   margin: 6px 0 10px;
   padding: 8px 10px;

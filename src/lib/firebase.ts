@@ -225,7 +225,7 @@ export async function addGuestbookEntry(author: string, text: string) {
 }
 
 /* 소유자 전용 — 한줄평 수정·삭제 (firestore.rules 에서 isOwner 로 잠금) */
-export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard", id: string, text: string) {
+export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard" | "gratitude", id: string, text: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   const trimmed = text.trim();
@@ -233,7 +233,7 @@ export async function updateEntryText(coll: "guestbook" | "bangladesh" | "practi
   await updateDoc(doc(store, coll, id), { text: trimmed });
 }
 
-export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard" | "photos", id: string) {
+export async function deleteEntry(coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard" | "gratitude" | "photos", id: string) {
   const store = getDb();
   if (!store) throw new Error("설정되지 않았습니다.");
   await deleteDoc(doc(store, coll, id));
@@ -420,4 +420,56 @@ export async function addPracticeEntry(
   if (trimmedLink) payload.link = trimmedLink;
 
   await addDoc(collection(store, coll), payload);
+}
+
+/* ---------------------------------------------------------------
+   감사일기 (gratitude) — 누구나 오늘 고마웠던 일을 한 편 남깁니다.
+   --------------------------------------------------------------- */
+export const GRATITUDE_LIMITS = { author: 20, text: 1000 } as const;
+export const isGratitudeEnabled = isFirebaseConfigured;
+
+export function subscribeGratitude(
+  count: number,
+  onData: (entries: RemoteEntry[]) => void,
+  onError: (error: Error) => void
+) {
+  const store = getDb();
+  if (!store) return () => {};
+
+  const q = query(collection(store, "gratitude"), orderBy("createdAt", "desc"), fsLimit(count));
+  return onSnapshot(
+    q,
+    snapshot => {
+      onData(
+        snapshot.docs.map(entry => {
+          const data = entry.data();
+          return {
+            id: entry.id,
+            author: String(data.author ?? ""),
+            text: String(data.text ?? ""),
+            date: formatDate(data.createdAt)
+          };
+        })
+      );
+    },
+    error => onError(error as Error)
+  );
+}
+
+export async function addGratitudeEntry(author: string, text: string) {
+  const store = getDb();
+  if (!store) throw new Error("감사일기가 설정되지 않았습니다.");
+
+  const trimmedAuthor = author.trim();
+  const trimmedText = text.trim();
+
+  if (!trimmedAuthor || !trimmedText) throw new Error("이름과 감사한 일을 모두 적어 주세요.");
+  if (trimmedAuthor.length > GRATITUDE_LIMITS.author) throw new Error(`이름은 ${GRATITUDE_LIMITS.author}자까지 쓸 수 있어요.`);
+  if (trimmedText.length > GRATITUDE_LIMITS.text) throw new Error(`일기는 ${GRATITUDE_LIMITS.text}자까지 쓸 수 있어요.`);
+
+  await addDoc(collection(store, "gratitude"), {
+    author: trimmedAuthor,
+    text: trimmedText,
+    createdAt: serverTimestamp()
+  });
 }

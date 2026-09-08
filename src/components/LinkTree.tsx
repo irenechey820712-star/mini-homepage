@@ -6,20 +6,24 @@ import { asset } from "@/lib/asset";
 import BgmPlayer, { type BgmHandle } from "@/components/BgmPlayer";
 import {
   BANGLADESH_LIMITS,
+  GRATITUDE_LIMITS,
   GUESTBOOK_LIMITS,
   PHOTO_LIMITS,
   PRACTICE_LIMITS,
   addBangladeshEntry,
+  addGratitudeEntry,
   addGuestbookEntry,
   addPhotoEntry,
   addPracticeEntry,
   deleteEntry,
   isCounterEnabled,
   isFirebaseConfigured,
+  isGratitudeEnabled,
   isGuestbookEnabled,
   isPhotoUploadEnabled,
   recordVisit,
   subscribeBangladesh,
+  subscribeGratitude,
   subscribeGuestbook,
   subscribePhotos,
   subscribePracticeBoard,
@@ -48,7 +52,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "bangladesh", "bdtraining"] as const;
+const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "gratitude", "bangladesh", "bdtraining"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -63,6 +67,7 @@ const NAV_LABELS: Record<TabName, string> = {
   board: profile.boardLabel,
   photo: profile.photoLabel,
   guestbook: "방명록",
+  gratitude: "감사일기",
   bangladesh: "방글라",
   bdtraining: "연수"
 };
@@ -325,6 +330,7 @@ const TAB_TITLES: Record<TabName, string> = {
   board: profile.boardLabel,
   photo: profile.photoLabel,
   guestbook: "방명록",
+  gratitude: "감사일기",
   bangladesh: "방글라데시 코너",
   bdtraining: "방글라데시 연수"
 };
@@ -665,7 +671,7 @@ function BoardTab() {
 }
 
 /* 편집 모드에서 소유자에게만 보이는 글 수정·삭제 컨트롤입니다. */
-function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard"; id: string; text: string }) {
+function OwnerControls({ coll, id, text }: { coll: "guestbook" | "bangladesh" | "practiceBoard" | "bdTrainingBoard" | "gratitude"; id: string; text: string }) {
   const { editing, owner } = useSiteEditor();
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState(text);
@@ -855,6 +861,110 @@ function GuestbookTab() {
       ) : (
         <GuestbookList />
       )}
+    </div>
+  );
+}
+
+/* 감사일기 탭: 누구나 오늘 고마웠던 일을 한 편 남깁니다. 글은 방문자 모두에게 보입니다. */
+function GratitudeForm() {
+  const [author, setAuthor] = useState("");
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [message, setMessage] = useState<{ kind: "ok" | "error"; text: string } | null>(null);
+
+  const submit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (sending) return;
+    setSending(true);
+    setMessage(null);
+    try {
+      await addGratitudeEntry(author, text);
+      setAuthor("");
+      setText("");
+      setMessage({ kind: "ok", text: "감사일기를 남겼어요. 고맙습니다!" });
+    } catch (error) {
+      const code = (error as { code?: string })?.code;
+      const t =
+        code === "permission-denied"
+          ? "지금은 일기를 저장할 수 없어요. (관리자: Firebase 콘솔에서 Firestore 규칙을 게시해 주세요)"
+          : error instanceof Error
+            ? error.message
+            : "남기지 못했어요. 잠시 뒤 다시 시도해 주세요.";
+      setMessage({ kind: "error", text: t });
+    } finally {
+      setSending(false);
+    }
+  };
+
+  return (
+    <form className="cy-bd-form" onSubmit={submit}>
+      <input
+        className="cy-gb-author"
+        value={author}
+        onChange={e => setAuthor(e.target.value)}
+        placeholder="이름"
+        maxLength={GRATITUDE_LIMITS.author}
+        aria-label="이름"
+      />
+      <textarea
+        className="cy-bd-textarea"
+        value={text}
+        onChange={e => setText(e.target.value)}
+        placeholder="오늘 고마웠던 일을 적어 보세요"
+        maxLength={GRATITUDE_LIMITS.text}
+        rows={4}
+        aria-label="감사일기"
+      />
+      <button className="cy-gb-submit" type="submit" disabled={sending}>
+        {sending ? "남기는 중" : "일기 남기기"}
+      </button>
+      {message ? (
+        <span className={`cy-gb-message${message.kind === "error" ? " is-error" : ""}`}>{message.text}</span>
+      ) : null}
+    </form>
+  );
+}
+
+function GratitudeTab() {
+  const [remote, setRemote] = useState<RemoteEntry[] | null>(null);
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    if (!isGratitudeEnabled) return;
+    return subscribeGratitude(50, setRemote, () => setFailed(true));
+  }, []);
+
+  return (
+    <div className="cy-content-box">
+      <div className="cy-section-title">
+        감사일기
+        <span className="cy-sub-text">오늘 고마웠던 일을 한 편씩 적어요</span>
+      </div>
+
+      {!isGratitudeEnabled ? (
+        <div className="cy-empty-box">감사일기는 준비 중입니다.</div>
+      ) : failed ? (
+        <div className="cy-gb-loading">아직 쓴 일기가 없어요.</div>
+      ) : remote === null ? (
+        <div className="cy-gb-loading">불러오는 중…</div>
+      ) : remote.length === 0 ? (
+        <div className="cy-gb-loading">첫 감사일기를 남겨 보세요!</div>
+      ) : (
+        <div className="cy-bd-list">
+          {remote.map(entry => (
+            <div key={entry.id} className="cy-bd-item">
+              <div className="cy-bd-head">
+                <b><span className="cy-name-heart" aria-hidden="true">🍀</span> {entry.author}</b>{" "}
+                <span className="cg-date">({entry.date})</span>
+              </div>
+              <div className="cy-bd-original cy-gratitude-text">{entry.text}</div>
+              <OwnerControls coll="gratitude" id={entry.id} text={entry.text} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isGratitudeEnabled ? <GratitudeForm /> : null}
     </div>
   );
 }
@@ -1586,6 +1696,7 @@ function LinkTreeInner() {
                 {activeTab === "board" && <BoardTab />}
                 {activeTab === "photo" && <PhotoTab />}
                 {activeTab === "guestbook" && <GuestbookTab />}
+                {activeTab === "gratitude" && <GratitudeTab />}
                 {activeTab === "bangladesh" && <BangladeshTab />}
                 {activeTab === "bdtraining" && <BangladeshTrainingTab />}
               </div>

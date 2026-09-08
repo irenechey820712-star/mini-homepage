@@ -113,6 +113,25 @@ service cloud.firestore {
       allow update, delete: if isOwner();
     }
 
+    /* 감사일기입니다. 누구나 오늘 고마웠던 일을 한 편 남길 수 있습니다.
+       - 필드는 author, text, createdAt 세 개만 허용 (이름 20자, 본문 1000자)
+       - createdAt 은 서버 시간만 허용, 수정·삭제는 소유자만 */
+    match /gratitude/{entryId} {
+      allow read: if true;
+
+      allow create: if request.resource.data.keys().hasOnly(['author', 'text', 'createdAt'])
+        && request.resource.data.author is string
+        && request.resource.data.author.size() >= 1
+        && request.resource.data.author.size() <= 20
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 1
+        && request.resource.data.text.size() <= 1000
+        && request.resource.data.createdAt == request.time;
+
+      /* 소유자는 수정·삭제(모더레이션) 가능 */
+      allow update, delete: if isOwner();
+    }
+
     /* 미니홈피 왼쪽 위 TODAY / TOTAL 방문 수입니다. 문서 하나만 씁니다.
 
        - 한 번에 total 을 1씩만 올릴 수 있습니다
