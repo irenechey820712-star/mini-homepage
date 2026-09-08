@@ -1371,10 +1371,10 @@ function PhotoTab() {
         </div>
       )}
 
-      {!live ? (
-        <div className="cy-empty-box">사진 올리기는 준비 중입니다.</div>
-      ) : (
+      {isPhotoUploadEnabled ? (
         <PhotoUploadForm />
+      ) : (
+        <div className="cy-empty-box">사진 올리기는 준비 중입니다.</div>
       )}
     </div>
   );
