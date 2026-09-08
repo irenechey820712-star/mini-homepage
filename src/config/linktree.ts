@@ -284,6 +284,12 @@ export const bangladeshTrainingLinks: BdTrainingLink[] = [
     title: "AI 창작 미션 — 참가자 페이지 · AI Creative Mission — Participant Page",
     summary: "방글라데시 교원 연수 참가자용 페이지 · Participant page for the Bangladesh teacher training",
     href: "https://irenechey820712-star.github.io/ai-creative-mission/participant.html"
+  },
+  {
+    id: "canva-ai-video-guide",
+    title: "나만의 AI 영상 만들기 (Canva) · Create Your Own AI Video · নিজের AI ভিডিও তৈরি করুন",
+    summary: "AI 영상 제작 안내 자료 · A Canva guide to making your own AI video · নিজের AI ভিডিও তৈরির ক্যানভা গাইড",
+    href: "https://canva.link/yuczzd3dcuhzf89"
   }
 ];
 
