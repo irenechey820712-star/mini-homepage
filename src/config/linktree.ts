@@ -139,6 +139,14 @@ export type BoardPost = {
 
 export const boardPosts: BoardPost[] = [
   {
+    id: "jeju-as-textbook",
+    category: "앱",
+    title: "제주라는 교과서 — 수학여행 진로 융합 탐구 워크북 · Jeju as a Textbook — A Field-Trip Career-Convergence Inquiry Workbook · জেজু একটি পাঠ্যবই — শিক্ষা সফরের ক্যারিয়ার-সমন্বিত অনুসন্ধান ওয়ার্কবুক",
+    summary: "제주도 수학여행을 진로 탐구 현장으로 삼아 계열별로 읽고 관찰·기록해 제출하는 인터랙티브 워크북 · An interactive workbook that turns a Jeju field trip into a career-inquiry site: read by track, observe, record, and submit · জেজু ভ্রমণকে ক্যারিয়ার-অনুসন্ধানের ক্ষেত্র বানিয়ে ট্র্যাক অনুযায়ী পড়া, পর্যবেক্ষণ, রেকর্ড ও জমা দেওয়ার ইন্টারেক্টিভ ওয়ার্কবুক",
+    date: "2026.09",
+    href: "https://jeju-as-textbook.vercel.app/"
+  },
+  {
     id: "canva-materials",
     category: "글",
     title: "나만의 AI 영상 만들기 · Create Your Own AI Video · নিজের AI ভিডিও তৈরি করুন",
