@@ -12,3 +12,6 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 tsconfig.tsbuildinfo
+
+# dorms-check 점검 결과 (로컬 전용)
+.dorms-check/
