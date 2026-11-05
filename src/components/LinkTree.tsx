@@ -42,6 +42,8 @@ import {
   bangladeshTrainingIntro,
   bangladeshTrainingLinks,
   boardPosts,
+  classMaterialLinks,
+  classMaterialsIntro,
   episodes,
   guestbook,
   photos,
@@ -52,7 +54,7 @@ import {
 import { theme } from "@/config/theme";
 import { EditBar, EditableText, SiteEditorProvider, useSiteEditor } from "@/components/SiteEditor";
 
-const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "photo", "guestbook", "gratitude", "bangladesh", "bdtraining"] as const;
+const ALL_TABS = ["home", "profile", "aiedap", "story", "board", "materials", "photo", "guestbook", "gratitude", "bangladesh", "bdtraining"] as const;
 type TabName = (typeof ALL_TABS)[number];
 
 /* 연재물이 하나도 없으면 탭 자체를 숨깁니다. */
@@ -65,6 +67,7 @@ const NAV_LABELS: Record<TabName, string> = {
   aiedap: "AIEDAP",
   story: profile.storyLabel,
   board: profile.boardLabel,
+  materials: "수업자료",
   photo: profile.photoLabel,
   guestbook: "방명록",
   gratitude: "감사일기",
@@ -328,6 +331,7 @@ const TAB_TITLES: Record<TabName, string> = {
   aiedap: "AIEDAP 심화연수",
   story: profile.storyLabel,
   board: profile.boardLabel,
+  materials: "수업자료",
   photo: profile.photoLabel,
   guestbook: "방명록",
   gratitude: "감사일기",
@@ -1313,6 +1317,46 @@ function BangladeshTab() {
   );
 }
 
+/* 수업자료 탭: 수업용 웹앱·학습지 링크를 묶음별로 보여줍니다. (linktree.ts 의 classMaterialLinks) */
+function ClassMaterialsTab() {
+  const groups = classMaterialLinks.reduce<{ name: string; items: typeof classMaterialLinks }[]>((acc, link) => {
+    const found = acc.find(g => g.name === link.group);
+    if (found) found.items.push(link);
+    else acc.push({ name: link.group, items: [link] });
+    return acc;
+  }, []);
+  return (
+    <div className="cy-content-box">
+      <SectionTitle title="수업자료" sub={`웹앱 ${classMaterialLinks.length}개`} />
+      <p className="cy-board-summary" style={{ margin: "0 0 10px" }}>{classMaterialsIntro}</p>
+      {groups.length === 0 ? (
+        <div className="cy-empty-box">아직 올린 자료가 없습니다.</div>
+      ) : (
+        groups.map(group => (
+          <div key={group.name} style={{ marginBottom: 14 }}>
+            <div className="cy-section-title" style={{ fontSize: "0.95em" }}>{group.name}</div>
+            <ul className="cy-board-list">
+              {group.items.map(link => (
+                <li key={link.id} className="cy-board-item">
+                  <a className="cy-board-link" href={link.href} target="_blank" rel="noopener noreferrer">
+                    <span className="cy-board-text">
+                      <span className="cy-board-head">
+                        <span className="cy-board-category">{link.category}</span>
+                        <span className="cy-board-title">{link.title}</span>
+                      </span>
+                      {link.summary ? <span className="cy-board-summary">{link.summary}</span> : null}
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      )}
+    </div>
+  );
+}
+
 /* 방글라데시 연수 탭: 연수와 관련된 링크를 모아 보여줍니다. (linktree.ts 의 bangladeshTrainingLinks) */
 function BangladeshTrainingTab() {
   return (
@@ -1694,6 +1738,7 @@ function LinkTreeInner() {
                 {activeTab === "aiedap" && <AiedapTab />}
                 {activeTab === "story" && <StoryTab />}
                 {activeTab === "board" && <BoardTab />}
+                {activeTab === "materials" && <ClassMaterialsTab />}
                 {activeTab === "photo" && <PhotoTab />}
                 {activeTab === "guestbook" && <GuestbookTab />}
                 {activeTab === "gratitude" && <GratitudeTab />}

@@ -8,7 +8,7 @@ export const profile = {
   /* 왼쪽 프로필 사진입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
   photo: { src: "/assets/profile.png", alt: "아이링쌤 프로필" },
   /* 홈 탭 위쪽 미니룸 이미지입니다. public/assets/ 안에 파일을 넣고 경로를 적으세요. */
-  miniroom: { src: "/assets/room4.png", alt: "아이링쌤의 데이터실험실 미니룸" },
+  miniroom: { src: "/assets/room5.png", alt: "아이링쌤의 데이터실험실 미니룸: 눈 내리는 겨울 영어 교실" },
   /* 아래는 탭 이름표입니다. 나만의 이름으로 바꿔도 되고, 안 바꾸면 기본값 그대로 나옵니다. */
   storyLabel: "연재물",
   boardLabel: "게시판",
@@ -305,6 +305,57 @@ export const bangladeshTrainingLinks: BdTrainingLink[] = [
     title: "K컬처 아이스브레이커 퀴즈 (대구·한국) · K-Culture Icebreaker Quiz",
     summary: "영화·K드라마·음식·야시장·대구 여행을 소재로 한 가벼운 아이스브레이킹 퀴즈 · A light icebreaker quiz on movies, K-drama, food, night markets and Daegu travel",
     href: "https://irenechey820712-star.github.io/mini-homepage/k-culture-icebreaker.html"
+  }
+];
+
+/* 수업자료 탭입니다. 수업에 쓰는 웹앱과 학습지 링크를 여기에 추가하세요.
+   group 이 같은 항목끼리 묶여서 나옵니다. */
+export type ClassMaterialLink = {
+  id: string;
+  group: string;
+  category: string;
+  title: string;
+  summary?: string;
+  href: string;
+};
+
+export const classMaterialsIntro =
+  "영어Ⅱ 수업에서 쓰는 웹앱 학습지와 사고 실험실입니다. 눌러서 바로 풀어 볼 수 있어요.";
+
+const L4_APPS = "https://irenechey820712-star.github.io/l4-what-if-webapps/";
+
+export const classMaterialLinks: ClassMaterialLink[] = [
+  {
+    id: "l4-hub",
+    group: "영어Ⅱ Lesson 4 · What-If Science",
+    category: "모음",
+    title: "Lesson 4 웹앱 모음",
+    summary: "빌드업 학습지, 사고 실험실, 한 걸음 학습지를 한곳에서 골라 들어가요.",
+    href: L4_APPS
+  },
+  {
+    id: "l4-buildup",
+    group: "영어Ⅱ Lesson 4 · What-If Science",
+    category: "학습지",
+    title: "빌드업 학습지 (1·2차시 · 3·4차시)",
+    summary: "요약문 낱말 채우기 → 원문 문장 만들기 → 한 줄 요약. 자동 채점.",
+    href: L4_APPS + "buildup.html"
+  },
+  {
+    id: "l4-lab",
+    group: "영어Ⅱ Lesson 4 · What-If Science",
+    category: "실험실",
+    title: "What-If 사고 실험실",
+    summary: "낙하, 거인, 달과 자전축, 산소, 파란 달. 직접 조작하고 영어 문장으로 설명해요.",
+    href: L4_APPS + "lab.html"
+  },
+  {
+    id: "l4-step",
+    group: "영어Ⅱ Lesson 4 · What-If Science",
+    category: "학습지",
+    title: "한 걸음 학습지 (1~4차시)",
+    summary: "끊어 읽기 → 쓰기 사다리 → 복합 문제 쪼개기.",
+    href: L4_APPS + "step.html"
   }
 ];
 
