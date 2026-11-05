@@ -363,6 +363,7 @@ export function secondsAt(timestamp: string): number {
 }
 
 export const bgmTracks: BgmTrack[] = [
+  { id: "rescene-pulse", title: "PULSE 앨범 전곡 듣기 (신곡)", artist: "리센느", videoId: "9v-C73LeC50" },
   { id: "pinball", title: "Pinball", artist: "리센느", videoId: "B8JJ8RNM-60" },
   { id: "newjeans-playlist", title: "뉴진스 플레이리스트", artist: "NewJeans", videoId: "f1WuPpDA5fo" },
   { id: "tuide-playlist", title: "튜이드 노래모음 (신곡 포함)", artist: "TUIDE", videoId: "krcxcaucdaY" },
